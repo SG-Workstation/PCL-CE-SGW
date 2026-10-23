@@ -40,6 +40,11 @@ one of the Apache-2.0 directories of the repository, and the copy that then
 lives there is distributed under Apache-2.0. It simply stops carrying this
 grant at that point.
 
+Code from 'SGW.Tools/' may not be copied into this directory: that directory
+is under CC BY-NC-SA 4.0, whose ShareAlike condition would require the
+resulting file to be shared under CC BY-NC-SA 4.0, which the MIT grant here
+cannot cover.
+
 The repository root LICENSE holds the complete path-to-license map. Shipping a
 build that includes this directory still requires compliance with Apache
 License 2.0 (including the notices in 'PCL.Core/NOTICE') and, where the build

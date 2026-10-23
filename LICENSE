@@ -250,9 +250,63 @@
           copies of the unmodified software). The MIT grant above does not
           relax those obligations and grants no trademark rights.
 
-   3. ALL OTHER FILES AND DIRECTORIES
+   3. SPECIAL DIRECTORY: SGW.Tools/
 
-      Every file and directory of this repository other than the two special
+      Copyright 2026 SG-WorkStation
+
+      Original code under 'SGW.Tools/', including the projects in
+      'SGW.Tools/SGW.CloudPiercer/' and 'SGW.Tools/SGW.SaveTimeMachine/', is
+      licensed under the Creative Commons Attribution-NonCommercial-ShareAlike
+      4.0 International Public License (CC BY-NC-SA 4.0). The complete legal
+      code is in 'SGW.Tools/LICENSE'; attribution information and the licence
+      URI are in 'SGW.Tools/README.md'.
+
+      SPDX identifier for this path: CC-BY-NC-SA-4.0
+
+      What the three licence elements mean here, quoting the licence itself.
+      This description adds no conditions of its own; where it and the licence
+      text differ, the licence text governs.
+
+      (a) Attribution (section 3(a)). Anyone who shares this material, or
+          material adapted from it, must credit SG-WorkStation, keep the
+          copyright and licence notices, refer to the licence, and indicate
+          whether changes were made.
+
+      (b) NonCommercial (sections 1(k) and 2(a)(1)). The grant covers sharing
+          and adaptation "for NonCommercial purposes only", that is, "not
+          primarily intended for or directed towards commercial advantage or
+          monetary compensation". A build that includes this directory carries
+          that limit. This also holds when the launcher is published as a
+          single file that embeds the compiled assemblies: bundling does not
+          relicense any part.
+
+      (c) ShareAlike (section 3(b)). Adapted Material produced from this
+          directory must be shared under a Creative Commons licence with the
+          same License Elements, this version or a later one, or a BY-NC-SA
+          Compatible License. The consequence is that code from this directory
+          cannot be moved into 'PCL.SGW/' or into the Apache-2.0 directories:
+          the resulting file would be Adapted Material and would have to be
+          shared under CC BY-NC-SA 4.0, and the MIT and Apache grants of this
+          repository cannot override that condition.
+
+      (d) No patent or trademark grant (section 2(b)(2)). Unlike the
+          Apache-2.0 directories, this directory carries no express patent
+          licence. Code that needs a patent grant belongs in, or should be
+          contributed to, the Apache-2.0 directories.
+
+      (e) This directory may reference assemblies built from 'PCL.Core/' and
+          'PCL.SGW/' as any other code does, and may incorporate code carrying
+          the MIT grant of 'PCL.SGW/', since MIT permits that. It is only the
+          direction in (c) - moving this directory's code elsewhere - that the
+          ShareAlike condition rules out.
+
+      (f) Nothing in this map adds terms to, or restricts, the rights that CC
+          BY-NC-SA 4.0 grants; section 2(a)(5)(C) of that licence forbids
+          additional restrictions on recipients.
+
+   4. ALL OTHER FILES AND DIRECTORIES
+
+      Every file and directory of this repository other than the special
       directories listed above is licensed under the Apache License,
       Version 2.0. This covers, among others, files at the repository root,
       the 'PCL.Core/', 'PCL.Core.SourceGenerators/', 'PCL.Core.Test/' and
@@ -275,7 +329,7 @@
 
       SPDX identifier for this path: Apache-2.0
 
-   4. MODIFICATIONS TO FILES UNDER THE DIRECTORIES ABOVE
+   5. MODIFICATIONS TO FILES UNDER THE DIRECTORIES ABOVE
 
       Copyright 2026 SG-WorkStation (modifications only)
 
@@ -321,13 +375,15 @@
 
       PCL.SGW/, original code               MIT (see 'PCL.SGW/LICENSE')
       PCL.SGW/, derived from elsewhere      license of the source directory
+      SGW.Tools/                            CC BY-NC-SA 4.0 (see the LICENSE
+                                            and README.md in that directory)
       Plain Craft Launcher 2/               custom terms (see the LICENCE
                                             file in that directory)
       files modified by SG-WorkStation      license of their own directory,
-                                            plus a change notice (section 4)
+                                            plus a change notice (section 5)
       everything else                       Apache-2.0
 
-      This summary restates sections 1 to 4 and creates no new grant. If it
-      appears to conflict with those sections, sections 1 to 4 govern. A file
+      This summary restates sections 1 to 5 and creates no new grant. If it
+      appears to conflict with those sections, sections 1 to 5 govern. A file
       that contains code from several origins keeps the notices of every part
-      it contains, and sections 2(b) and 4 govern that case.
+      it contains, and sections 2(b), 3(c) and 5 govern that case.
