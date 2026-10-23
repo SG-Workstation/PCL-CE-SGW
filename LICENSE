@@ -186,22 +186,148 @@
       same "printed page" as the copyright notice for easier
       identification within third-party archives.
 
-   Copyright 2025 PCL Community
+   ----------------------------------------------------------------------
+   REPOSITORY LICENSE MAP
 
-   SPECIAL DIRECTORY: Plain Craft Launcher 2/
+   This repository is not licensed as a single unit. The map below assigns
+   a license to each part of the repository. Each grant applies only to the
+   paths named for it, and is conditioned on compliance with the license
+   text it names.
 
-   Licensed under some custom terms discribed in the 'Plain Craft Launcher 2/LICENCE' file.
+   No copyright line in this map claims ownership of the repository as a
+   whole. Each copyright notice below covers only the path it is attached
+   to.
 
-   ALL THE OTHER DIRECTORIES
+   1. SPECIAL DIRECTORY: Plain Craft Launcher 2/
 
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
+      Licensed under the custom terms described in
+      'Plain Craft Launcher 2/LICENCE'. That file is part of this
+      repository's licensing terms. All rights not expressly granted there
+      remain reserved by the licensor.
 
-       http://www.apache.org/licenses/LICENSE-2.0
+   2. SPECIAL DIRECTORY: PCL.SGW/
 
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
+      Copyright 2026 SG-WorkStation
+
+      Original code in this directory is licensed under the MIT License.
+      The complete text of the MIT License is provided in 'PCL.SGW/LICENSE',
+      and applies together with the scope rules below. Its copyright notice
+      and permission notice must be included in all copies or substantial
+      portions of the Software, as the MIT License requires, so a copy of
+      that file has to travel with any distribution of this directory.
+
+      SPDX identifier for this path: MIT
+
+      Scope of the grant, and how it meets the rest of the repository:
+
+      (a) The MIT grant covers only original work authored by SG-WorkStation
+          and placed in 'PCL.SGW/'. It grants no rights in any file outside
+          that directory.
+
+      (b) A file in 'PCL.SGW/' that is copied from, or is a derivative work
+          of, code from another directory of this repository is not covered
+          by the MIT grant. Such a file remains subject to the license of
+          its source directory: the Apache License 2.0, or the custom terms
+          in 'Plain Craft Launcher 2/LICENCE'. It must keep its original
+          copyright and license notices, and must carry a prominent notice
+          stating that the file was changed, as required by Apache License
+          2.0, section 4(b).
+
+      (c) Linking to, or depending on, code in the Apache-2.0 directories of
+          this repository does not change the license of either side and
+          does not place the MIT-licensed code under Apache-2.0. This
+          follows the direction that permissive licenses allow: MIT-licensed
+          code may be combined into an Apache-2.0 work, not the reverse.
+          Consequently, Apache-2.0 code must not be copied into 'PCL.SGW/'
+          and relabeled as MIT.
+
+      (d) Distributing a build that combines several of these parts remains
+          subject to every license involved: Apache License 2.0, section 4
+          (retaining 'PCL.Core/NOTICE' and any other NOTICE text, marking
+          modified files), and, for builds that include the application
+          directory, the custom terms of 'Plain Craft Launcher 2/LICENCE'
+          (naming, attribution, and no-charge distribution of verbatim
+          copies of the unmodified software). The MIT grant above does not
+          relax those obligations and grants no trademark rights.
+
+   3. ALL OTHER FILES AND DIRECTORIES
+
+      Every file and directory of this repository other than the two special
+      directories listed above is licensed under the Apache License,
+      Version 2.0. This covers, among others, files at the repository root,
+      the 'PCL.Core/', 'PCL.Core.SourceGenerators/', 'PCL.Core.Test/' and
+      '.github/' directories, and the attribution file 'PCL.Core/NOTICE'
+      for third-party components.
+
+      Copyright 2025 PCL Community
+
+      Licensed under the Apache License, Version 2.0 (the "License");
+      you may not use this file except in compliance with the License.
+      You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+      implied. See the License for the specific language governing
+      permissions and limitations under the License.
+
+      SPDX identifier for this path: Apache-2.0
+
+   4. MODIFICATIONS TO FILES UNDER THE DIRECTORIES ABOVE
+
+      Copyright 2026 SG-WorkStation (modifications only)
+
+      Editing a file does not change the license of that file. A file that
+      SG-WorkStation modifies keeps the license of the directory it lives in,
+      and the modified file is distributed under that same license.
+      SG-WorkStation claims copyright in its own modifications; it does not
+      claim ownership of, and does not purport to relicense, the pre-existing
+      code.
+
+      (a) Files edited inside 'Plain Craft Launcher 2/' remain subject to the
+          custom terms in 'Plain Craft Launcher 2/LICENCE'. Its guide applies
+          to distributed builds of the modified application.
+
+      (b) Files edited inside the Apache-2.0 directories remain subject to the
+          Apache License 2.0. Its section 4(b) requires a prominent notice
+          that the file was changed, so every modified file should carry a
+          line in its header, for example:
+
+              // Modified by SG-WorkStation, 2026.
+
+          Removing or replacing the original Apache header - for instance
+          with an MIT header - would breach sections 4(a) to 4(c) of the
+          Apache License 2.0 and is not what this map grants. Existing
+          copyright and license notices stay in place; modification notices
+          are added alongside them.
+
+      (c) The reverse direction is permitted. Code from 'PCL.SGW/' may be
+          copied into an Apache-2.0 directory, because MIT-licensed code may
+          be incorporated into an Apache-2.0 work. The copy, as it then exists
+          in that directory, is distributed under Apache-2.0; the original
+          MIT grant continues to apply to the original copy.
+
+      (d) A new file written by SG-WorkStation directly inside one of the
+          directories above is original work authored by SG-WorkStation, and
+          is distributed under the license of the directory it is placed in:
+          Apache-2.0 in the Apache-2.0 directories, and the custom terms of
+          'Plain Craft Launcher 2/LICENCE' inside that directory. Its
+          copyright line credits SG-WorkStation alone.
+
+   ----------------------------------------------------------------------
+   PER-PATH SUMMARY (machine-readable form of the map above)
+
+      PCL.SGW/, original code               MIT (see 'PCL.SGW/LICENSE')
+      PCL.SGW/, derived from elsewhere      license of the source directory
+      Plain Craft Launcher 2/               custom terms (see the LICENCE
+                                            file in that directory)
+      files modified by SG-WorkStation      license of their own directory,
+                                            plus a change notice (section 4)
+      everything else                       Apache-2.0
+
+      This summary restates sections 1 to 4 and creates no new grant. If it
+      appears to conflict with those sections, sections 1 to 4 govern. A file
+      that contains code from several origins keeps the notices of every part
+      it contains, and sections 2(b) and 4 govern that case.

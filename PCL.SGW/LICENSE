@@ -1,0 +1,52 @@
+MIT License
+
+Copyright (c) 2026 SG-WorkStation
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+Scope of this file
+
+This file covers only original code authored by SG-WorkStation and placed in
+the PCL.SGW/ directory of the PCL-CE-SGW repository. Every other part of that
+repository keeps its own license.
+
+A file in PCL.SGW/ that copies from, or is derived from, code outside this
+directory stays under the license of its source directory (Apache-2.0, or the
+custom terms in 'Plain Craft Launcher 2/LICENCE'), and must keep its original
+copyright and license notices plus a prominent notice stating that it was
+changed. Copying Apache-2.0 code into this directory does not relicense it as
+MIT.
+
+The opposite direction is fine: code from this directory may be copied into
+one of the Apache-2.0 directories of the repository, and the copy that then
+lives there is distributed under Apache-2.0. It simply stops carrying this
+grant at that point.
+
+The repository root LICENSE holds the complete path-to-license map. Shipping a
+build that includes this directory still requires compliance with Apache
+License 2.0 (including the notices in 'PCL.Core/NOTICE') and, where the build
+includes the application directory, with the custom terms in
+'Plain Craft Launcher 2/LICENCE'.
+
+Suggested header for new source files in this directory:
+
+    // SPDX-License-Identifier: MIT
+    // Copyright (c) 2026 SG-WorkStation
