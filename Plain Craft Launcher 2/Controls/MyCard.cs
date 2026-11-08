@@ -40,7 +40,7 @@ public class MyCard : AnimatedBackgroundGrid
         mainGrid = new Grid();
         Children.Add(mainGrid);
         // 设置背景色
-        SetResourceReference(BackgroundBrushProperty, "ColorBrushTransparentBackground");
+        SetResourceReference(BackgroundBrushProperty, "ColorBrushContent");
         Loaded += (_, _) => Init();
         MouseEnter += MyCard_MouseEnter;
         MouseLeave += MyCard_MouseLeave;

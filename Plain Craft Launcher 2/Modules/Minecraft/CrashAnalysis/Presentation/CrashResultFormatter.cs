@@ -510,16 +510,7 @@ internal sealed class CrashResultFormatter
 
     private static string? _GetLauncherOutdatedSuggestion()
     {
-        try
-        {
-            return UpdateManager.GetVersionStatus() == UpdateEnums.VersionStatus.Latest
-                ? null
-                : Lang.Text("Crash.Suggestion.LauncherOutdated");
-        }
-        catch (Exception ex)
-        {
-            LogWrapper.Error(ex, "Crash", "确认启动器更新失败");
-            return null;
-        }
+        // 本构建不包含更新检查，无法判断启动器是否过期
+        return null;
     }
 }

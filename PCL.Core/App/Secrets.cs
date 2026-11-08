@@ -10,12 +10,33 @@ public static class Secrets
     /// <summary>
     /// 微软 OAuth 的 Client ID
     /// </summary>
-    public static string MSOAuthClientId { get; } = EnvironmentInterop.GetSecret("MS_CLIENT_ID", readEnvDebugOnly: true).ReplaceNullOrEmpty();
+    public static string MSOAuthClientId { get; } = ResolveSecret("MS_CLIENT_ID",
+#if LOCAL_SECRETS
+        LocalSecrets.MSClientId
+#else
+        ""
+#endif
+    );
 
     /// <summary>
     /// CurseForge API 的 Client ID
     /// </summary>
-    public static string CurseForgeAPIKey { get; } = EnvironmentInterop.GetSecret("CURSEFORGE_API_KEY", readEnvDebugOnly: true).ReplaceNullOrEmpty();
+    public static string CurseForgeAPIKey { get; } = ResolveSecret("CURSEFORGE_API_KEY",
+#if LOCAL_SECRETS
+        LocalSecrets.CurseForgeApiKey
+#else
+        ""
+#endif
+    );
+
+    /// <summary>
+    /// 解析密钥：优先使用构建注入 / 环境变量，其次使用本机 <c>LocalSecrets.cs</c> 中的硬编码值。
+    /// </summary>
+    private static string ResolveSecret(string key, string localValue)
+    {
+        var external = EnvironmentInterop.GetSecret(key, readEnvDebugOnly: true).ReplaceNullOrEmpty();
+        return !string.IsNullOrWhiteSpace(external) ? external : localValue.ReplaceNullOrEmpty();
+    }
 
     /// <summary>
     /// 遥测密钥

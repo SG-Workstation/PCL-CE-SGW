@@ -45,7 +45,6 @@ public partial class PageSetupLauncherMisc
     public void Reload()
     {
         // 系统设置
-        ComboSystemActivity.SelectedIndex = States.System.AnnounceSolution;
         CheckSystemDisableHardwareAcceleration.Checked = Config.System.DisableHardwareAcceleration;
         SliderAniFPS.Value = Config.System.AnimationFpsLimit;
         SliderMaxLog.Value = Config.System.MaxGameLog;
@@ -167,20 +166,6 @@ public partial class PageSetupLauncherMisc
     }
 
     // 自动更新
-    private void ComboSystemActivity_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (ModAnimation.AniControlEnabled != 0)
-            return;
-        if (ComboSystemActivity.SelectedIndex != 2)
-            return;
-        if (ModMain.MyMsgBox(
-                Lang.Text("Setup.Misc.System.Announcement.Disabled.Warning.Message"),
-                Lang.Text("Common.Dialog.Warning"),
-                Lang.Text("Setup.Misc.System.Announcement.Disabled.Warning.Confirm"),
-                Lang.Text("Common.Action.Cancel"), isWarn: true) ==
-            2) ComboSystemActivity.SelectedItem = e.RemovedItems[0];
-    }
-
     private void CheckDebugMode_OnChange(object sender, bool user)
     {
         CheckBoxChange(sender, user);
@@ -191,12 +176,6 @@ public partial class PageSetupLauncherMisc
     {
         CheckBoxChange(sender, user);
         Check_DisableHardwareAcceleration(sender, user);
-    }
-
-    private void ComboSystemActivity_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        ComboChange(sender, e);
-        ComboSystemActivity_SelectionChanged(sender, e);
     }
 
     #region 导出 / 导入设置

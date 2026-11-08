@@ -299,6 +299,111 @@ public static partial class Config
             /// 传说中的主题选择，但是没卵用。
             /// </summary>
             [ConfigItem<int>("UiLauncherTheme", 0, ConfigSource.Local)] public partial int ThemeSelected { get; set; }
+
+            /// <summary>
+            /// 当前启用的自定义主题包 id，空字符串表示使用内置配色。
+            /// </summary>
+            [ConfigItem<string>("UiThemePack", "", ConfigSource.Local)] public partial string ThemePackId { get; set; }
+
+            /// <summary>
+            /// 是否启用完全自定义的主题色，启用后覆盖上方的浅色/深色配色预设。
+            /// </summary>
+            [ConfigItem<bool>("UiThemeColorCustom", false, ConfigSource.Local)] public partial bool CustomColorEnabled { get; set; }
+
+            /// <summary>
+            /// 自定义主题色的色相（0~360）。
+            /// </summary>
+            [ConfigItem<int>("UiThemeColorHue", 255, ConfigSource.Local)] public partial int CustomHue { get; set; }
+
+            /// <summary>
+            /// 自定义主题色的明度偏移（-100~100）。
+            /// </summary>
+            [ConfigItem<int>("UiThemeColorLight", 0, ConfigSource.Local)] public partial int CustomLight { get; set; }
+
+            /// <summary>
+            /// 自定义主题色的彩度偏移（-100~100）。
+            /// </summary>
+            [ConfigItem<int>("UiThemeColorChroma", 0, ConfigSource.Local)] public partial int CustomChroma { get; set; }
+
+            /// <summary>
+            /// 独立覆盖的标题栏颜色（#AARRGGBB），空字符串表示跟随主题配色。
+            /// </summary>
+            [ConfigItem<string>("UiColorTitleBar", "", ConfigSource.Local)] public partial string TitleBarColor { get; set; }
+
+            /// <summary>
+            /// 独立覆盖的底板颜色（#AARRGGBB），空字符串表示跟随主题配色。
+            /// </summary>
+            [ConfigItem<string>("UiColorBase", "", ConfigSource.Local)] public partial string BaseColor { get; set; }
+
+            /// <summary>
+            /// 独立覆盖的内容区域颜色（#AARRGGBB），空字符串表示跟随主题配色。
+            /// </summary>
+            [ConfigItem<string>("UiColorContent", "", ConfigSource.Local)] public partial string ContentColor { get; set; }
+
+            /// <summary>
+            /// 亮色模式下未选中文本的颜色（#AARRGGBB），空字符串表示跟随主题配色。
+            /// </summary>
+            [ConfigItem<string>("UiColorTextLight", "", ConfigSource.Local)] public partial string TextLightColor { get; set; }
+
+            /// <summary>
+            /// 深色模式下未选中文本的颜色（#AARRGGBB），空字符串表示跟随主题配色。
+            /// </summary>
+            [ConfigItem<string>("UiColorTextDark", "", ConfigSource.Local)] public partial string TextDarkColor { get; set; }
+
+            /// <summary>
+            /// 已选中文本的颜色（#AARRGGBB），空字符串表示跟随主题配色。
+            /// </summary>
+            [ConfigItem<string>("UiColorTextSelected", "", ConfigSource.Local)] public partial string TextSelectedColor { get; set; }
+
+            /// <summary>
+            /// 顶栏左上角标题与 Logo 的颜色（#AARRGGBB），空字符串表示跟随主题配色。
+            /// </summary>
+            [ConfigItem<string>("UiColorTitleLogo", "", ConfigSource.Local)] public partial string TitleLogoColor { get; set; }
+
+            /// <summary>
+            /// 顶栏“启动”按钮的图标与文字颜色（#AARRGGBB），空字符串表示跟随主题配色。
+            /// </summary>
+            [ConfigItem<string>("UiColorTabLaunch", "", ConfigSource.Local)] public partial string TabLaunchColor { get; set; }
+
+            /// <summary>
+            /// 顶栏“下载”按钮的图标与文字颜色（#AARRGGBB），空字符串表示跟随主题配色。
+            /// </summary>
+            [ConfigItem<string>("UiColorTabDownload", "", ConfigSource.Local)] public partial string TabDownloadColor { get; set; }
+
+            /// <summary>
+            /// 顶栏“设置”按钮的图标与文字颜色（#AARRGGBB），空字符串表示跟随主题配色。
+            /// </summary>
+            [ConfigItem<string>("UiColorTabSettings", "", ConfigSource.Local)] public partial string TabSettingsColor { get; set; }
+
+            /// <summary>
+            /// 顶栏“工具”按钮的图标与文字颜色（#AARRGGBB），空字符串表示跟随主题配色。
+            /// </summary>
+            [ConfigItem<string>("UiColorTabTools", "", ConfigSource.Local)] public partial string TabToolsColor { get; set; }
+
+            /// <summary>
+            /// 控件边框颜色（#AARRGGBB），空字符串表示跟随主题配色。
+            /// </summary>
+            [ConfigItem<string>("UiColorBorder", "", ConfigSource.Local)] public partial string BorderColor { get; set; }
+
+            /// <summary>
+            /// 控件悬停边框颜色（#AARRGGBB），空字符串表示跟随主题配色。
+            /// </summary>
+            [ConfigItem<string>("UiColorBorderHover", "", ConfigSource.Local)] public partial string BorderHoverColor { get; set; }
+
+            /// <summary>
+            /// 控件聚焦边框颜色（#AARRGGBB），空字符串表示跟随主题配色。
+            /// </summary>
+            [ConfigItem<string>("UiColorBorderFocus", "", ConfigSource.Local)] public partial string BorderFocusColor { get; set; }
+
+            /// <summary>
+            /// 滑动条颜色（#AARRGGBB），空字符串表示跟随主题配色。
+            /// </summary>
+            [ConfigItem<string>("UiColorSlider", "", ConfigSource.Local)] public partial string SliderColor { get; set; }
+
+            /// <summary>
+            /// 右上角关闭、最小化等窗口按钮的颜色（#AARRGGBB），空字符串表示跟随主题配色。
+            /// </summary>
+            [ConfigItem<string>("UiColorWindowButton", "", ConfigSource.Local)] public partial string WindowButtonColor { get; set; }
         }
 
         /// <summary>

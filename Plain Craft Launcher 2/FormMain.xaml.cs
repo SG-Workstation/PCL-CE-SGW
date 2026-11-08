@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Runtime.InteropServices;
@@ -158,7 +158,6 @@ public partial class FormMain
         PageSetupUI.BackgroundRefresh(false, true);
         ModMusic.MusicRefreshPlay(false, true);
         // 扩展按钮
-        BtnExtraUpdateRestart.showCheck = BtnExtraUpdateRestart_ShowCheck;
         BtnExtraDownload.showCheck = BtnExtraDownload_ShowCheck;
         BtnExtraBack.showCheck = BtnExtraBack_ShowCheck;
         BtnExtraApril.showCheck = BtnExtraApril_ShowCheck;
@@ -178,6 +177,8 @@ public partial class FormMain
 
         ThemeManager.ThemeRefresh();
         ModSetup.ApplyAll();
+        // 自定义主题包（配色覆盖、字体、样式、壁纸与页面布局）
+        ThemePackManager.Initialize();
         Lifecycle.CurrentApplication.Resources["BlurSamplingRate"] = Config.Preference.Blur.SamplingRate * 0.01d;
         Lifecycle.CurrentApplication.Resources["BlurType"] = Config.Preference.Blur.KernelType;
         if (Config.Preference.Blur.IsEnabled)
@@ -254,7 +255,6 @@ public partial class FormMain
                 {
                     ModDownload.dlClientListMojangLoader.Start(1); // PCL 会同时根据这里的加载结果决定是否使用官方源进行下载
                     RunCountSub();
-                    UpdateManager.serverLoader.Start(1);
                     ModBase.RunInNewThread(ModMain.TryClearTaskTemp, "TryClearTaskTemp", ThreadPriority.BelowNormal);
                 }
                 catch (Exception ex)
@@ -313,8 +313,6 @@ public partial class FormMain
         if ((int)Config.Launch.GameWindowMode == 5)
             Config.Launch.GameWindowMode = GameWindowSizeMode.Default;
 
-        // 更新后展示社区版提示
-        UpdateManager.ShowCEAnnounce();
         // 输出更新日志
         if (lastVersionCode <= 0)
             return;
@@ -554,8 +552,6 @@ public partial class FormMain
         // Await LobbyController.CloseAsync().ConfigureAwait(False)
         ModBase.isProgramEnded = true;
         ModAnimation.AniControlEnabled += 1;
-        if (UpdateManager.isUpdateWaitingRestart && !isUpdating)
-            UpdateManager.UpdateRestart(false, false);
         if (returnCode == ModBase.ProcessReturnValues.Exception)
         {
             if (!isLogShown)
@@ -2108,17 +2104,6 @@ public partial class FormMain
     #endregion
 
     #region 附加按钮
-
-    // 更新重启
-    private void BtnExtraUpdateRestart_Click(object sender, MouseButtonEventArgs e)
-    {
-        UpdateManager.UpdateRestart(true);
-    }
-
-    private bool BtnExtraUpdateRestart_ShowCheck()
-    {
-        return UpdateManager.isUpdateWaitingRestart;
-    }
 
     // 音乐
     private void BtnExtraMusic_Click(object sender, MouseButtonEventArgs e)

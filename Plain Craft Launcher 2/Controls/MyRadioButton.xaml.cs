@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -188,6 +188,36 @@ public partial class MyRadioButton
         }
     } = ColorState.White; // 颜色类别
 
+    /// <summary>
+    ///     未选中时图标与文字使用的资源键；为空时沿用 ColorBrushWhite。
+    /// </summary>
+    public string TextColorResource
+    {
+        get;
+        set
+        {
+            value ??= string.Empty;
+            if (value == field) return;
+            field = value;
+            RefreshColor();
+        }
+    } = string.Empty;
+
+    /// <summary>
+    ///     选中时图标与文字使用的资源键；为空时沿用 ColorBrush3。
+    /// </summary>
+    public string CheckedTextColorResource
+    {
+        get;
+        set
+        {
+            value ??= string.Empty;
+            if (value == field) return;
+            field = value;
+            RefreshColor();
+        }
+    } = string.Empty;
+
     public event CheckEventHandler? Check;
 
     /// <summary>
@@ -314,6 +344,38 @@ public partial class MyRadioButton
         isMouseDown = false;
     }
 
+    /// <summary>
+    ///     取得未选中状态文字颜色资源键；资源不存在时回落到 ColorBrushWhite。
+    /// </summary>
+    private string GetTextColorKey()
+    {
+        return !string.IsNullOrWhiteSpace(TextColorResource) &&
+               ThemeManager.AppResources.Contains(TextColorResource)
+            ? TextColorResource
+            : "ColorBrushWhite";
+    }
+
+    private ModBase.MyColor GetTextColor()
+    {
+        return new ModBase.MyColor(ThemeManager.AppResources[GetTextColorKey()]);
+    }
+
+    /// <summary>
+    ///     取得选中状态文字颜色资源键；资源不存在时回落到 ColorBrush3。
+    /// </summary>
+    private string GetCheckedTextColorKey()
+    {
+        return !string.IsNullOrWhiteSpace(CheckedTextColorResource) &&
+               ThemeManager.AppResources.Contains(CheckedTextColorResource)
+            ? CheckedTextColorResource
+            : "ColorBrush3";
+    }
+
+    private ModBase.MyColor GetCheckedTextColor()
+    {
+        return new ModBase.MyColor(ThemeManager.AppResources[GetCheckedTextColorKey()]);
+    }
+
     private void RefreshColor(object obj = null, object e = null)
     {
         try
@@ -325,17 +387,18 @@ public partial class MyRadioButton
                 {
                     case ColorState.White:
                     {
+                        var textColor = GetTextColor();
                         if (Checked)
                         {
                             // 勾选
-                            var color3 = new ModBase.MyColor(ThemeManager.AppResources["ColorObject3"]);
+                            var checkedColor = GetCheckedTextColor();
                             ModAnimation.AniStart(
                                 new[]
                                 {
-                                    ModAnimation.AaColor(ShapeLogo, Shape.FillProperty, color3 - ShapeLogo.Fill,
-                                        animationTimeOfCheck),
+                                    ModAnimation.AaColor(ShapeLogo, Shape.FillProperty,
+                                        checkedColor - ShapeLogo.Fill, animationTimeOfCheck),
                                     ModAnimation.AaColor(LabText, TextBlock.ForegroundProperty,
-                                        color3 - LabText.Foreground, animationTimeOfCheck)
+                                        checkedColor - LabText.Foreground, animationTimeOfCheck)
                                 }, "MyRadioButton Checked " + Uuid);
                             ModAnimation.AniStart(
                                 ModAnimation.AaColor(this, BackgroundProperty,
@@ -358,10 +421,9 @@ public partial class MyRadioButton
                                 new[]
                                 {
                                     ModAnimation.AaColor(ShapeLogo, Shape.FillProperty,
-                                        new ModBase.MyColor(255d, 255d, 255d) - ShapeLogo.Fill, animationTimeOfMouseIn),
+                                        textColor - ShapeLogo.Fill, animationTimeOfMouseIn),
                                     ModAnimation.AaColor(LabText, TextBlock.ForegroundProperty,
-                                        new ModBase.MyColor(255d, 255d, 255d) - LabText.Foreground,
-                                        animationTimeOfMouseIn)
+                                        textColor - LabText.Foreground, animationTimeOfMouseIn)
                                 }, "MyRadioButton Checked " + Uuid);
                             ModAnimation.AniStart(
                                 ModAnimation.AaColor(this, BackgroundProperty,
@@ -376,11 +438,9 @@ public partial class MyRadioButton
                                 new[]
                                 {
                                     ModAnimation.AaColor(ShapeLogo, Shape.FillProperty,
-                                        new ModBase.MyColor(255d, 255d, 255d) - ShapeLogo.Fill,
-                                        animationTimeOfMouseOut),
+                                        textColor - ShapeLogo.Fill, animationTimeOfMouseOut),
                                     ModAnimation.AaColor(LabText, TextBlock.ForegroundProperty,
-                                        new ModBase.MyColor(255d, 255d, 255d) - LabText.Foreground,
-                                        animationTimeOfMouseOut)
+                                        textColor - LabText.Foreground, animationTimeOfMouseOut)
                                 }, "MyRadioButton Checked " + Uuid);
                             ModAnimation.AniStart(
                                 ModAnimation.AaColor(this, BackgroundProperty,
@@ -464,14 +524,16 @@ public partial class MyRadioButton
                         if (Checked)
                         {
                             Background = new ModBase.MyColor(255d, 255d, 255d);
-                            ShapeLogo.SetResourceReference(Shape.FillProperty, "ColorBrush3");
-                            LabText.SetResourceReference(TextBlock.ForegroundProperty, "ColorBrush3");
+                            var checkedKey = GetCheckedTextColorKey();
+                            ShapeLogo.SetResourceReference(Shape.FillProperty, checkedKey);
+                            LabText.SetResourceReference(TextBlock.ForegroundProperty, checkedKey);
                         }
                         else
                         {
                             Background = (Brush)ThemeManager.AppResources["ColorBrushSemiTransparent"];
-                            ShapeLogo.Fill = new ModBase.MyColor(255d, 255d, 255d);
-                            LabText.Foreground = new ModBase.MyColor(255d, 255d, 255d);
+                            var textKey = GetTextColorKey();
+                            ShapeLogo.SetResourceReference(Shape.FillProperty, textKey);
+                            LabText.SetResourceReference(TextBlock.ForegroundProperty, textKey);
                         }
 
                         break;

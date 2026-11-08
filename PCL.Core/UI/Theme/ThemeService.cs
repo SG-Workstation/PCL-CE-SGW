@@ -1,4 +1,6 @@
 using System;
+using System.Windows;
+using System.Windows.Media;
 using PCL.Core.App;
 using PCL.Core.App.Configuration;
 using PCL.Core.App.IoC;
@@ -55,6 +57,42 @@ public sealed partial class ThemeService
         }
     );
 
+    [RegisterConfigEvent]
+    public static ConfigEventRegistry OnCustomColorConfigChanged => new(
+        scope:
+        [
+            Config.Preference.Theme.CustomColorEnabledConfig, Config.Preference.Theme.CustomHueConfig,
+            Config.Preference.Theme.CustomLightConfig, Config.Preference.Theme.CustomChromaConfig
+        ],
+        trigger: ConfigEvent.Update,
+        handler: e =>
+        {
+            if (Equals(e.OldValue, e.Value)) return;
+            RefreshCustomColor();
+        }
+    );
+
+    [RegisterConfigEvent]
+    public static ConfigEventRegistry OnSurfaceColorConfigChanged => new(
+        scope:
+        [
+            Config.Preference.Theme.TitleBarColorConfig, Config.Preference.Theme.BaseColorConfig,
+            Config.Preference.Theme.ContentColorConfig, Config.Preference.Theme.TextLightColorConfig,
+            Config.Preference.Theme.TextDarkColorConfig, Config.Preference.Theme.TextSelectedColorConfig,
+            Config.Preference.Theme.TitleLogoColorConfig, Config.Preference.Theme.TabLaunchColorConfig,
+            Config.Preference.Theme.TabDownloadColorConfig, Config.Preference.Theme.TabSettingsColorConfig,
+            Config.Preference.Theme.TabToolsColorConfig, Config.Preference.Theme.BorderColorConfig,
+            Config.Preference.Theme.BorderHoverColorConfig, Config.Preference.Theme.BorderFocusColorConfig,
+            Config.Preference.Theme.SliderColorConfig, Config.Preference.Theme.WindowButtonColorConfig
+        ],
+        trigger: ConfigEvent.Update,
+        handler: e =>
+        {
+            if (Equals(e.OldValue, e.Value)) return;
+            RefreshCustomColor();
+        }
+    );
+
     [LifecycleStart]
     private static void _Start()
     {
@@ -65,7 +103,7 @@ public sealed partial class ThemeService
 
     private static void _LogStatus()
     {
-        Context.Debug($"当前状态: {(IsDarkMode ? "Dark" : "Light")}, {CurrentTheme}");
+        Context.Debug($"当前状态: {(IsDarkMode ? "Dark" : "Light")}, {CurrentTheme}, 配色参数: {GetCurrentThemeArgs()}");
     }
 
     private static bool _IsDarkMode() => Config.Preference.Theme.ColorMode switch
@@ -150,6 +188,15 @@ public sealed partial class ThemeService
     /// </summary>
     public static (int Hue, double LightAdjust, double ChromaAdjust) GetCurrentThemeArgs()
     {
+        // 完全自定义主题色：色相、明度偏移、彩度偏移全部来自配置，不再受内置蓝色预设限制
+        if (Config.Preference.Theme.CustomColorEnabled)
+        {
+            return (
+                _NormalizeHue(Config.Preference.Theme.CustomHue),
+                _NormalizeAdjust(Config.Preference.Theme.CustomLight),
+                _NormalizeAdjust(Config.Preference.Theme.CustomChroma));
+        }
+
         var theme = CurrentTheme;
         return theme switch
         {
@@ -164,6 +211,16 @@ public sealed partial class ThemeService
 #endif
         };
     }
+
+    /// <summary>
+    /// 把任意整数色相归一化到 0~359。
+    /// </summary>
+    private static int _NormalizeHue(int hue) => ((hue % 360) + 360) % 360;
+
+    /// <summary>
+    /// 把 -100~100 的滑块值映射为 -1~1 的偏移量。
+    /// </summary>
+    private static double _NormalizeAdjust(int value) => Math.Clamp(value, -100, 100) / 100d;
 
     private static double _AdjustLinear(double value, double adjustment)
     {
@@ -240,7 +297,105 @@ public sealed partial class ThemeService
     /// </summary>
     public static void ApplyColorResources()
     {
-        var colors = _CalculateColors(CurrentTone, GetCurrentThemeArgs());
+        var args = GetCurrentThemeArgs();
+        var colors = _CalculateColors(CurrentTone, args);
         foreach (var c in colors) c.Apply();
+        ApplySurfaceOverrides();
+        if (Lifecycle.CurrentState > LifecycleState.Loading)
+        {
+            var brush = Lifecycle.CurrentApplication.Resources["ColorBrush3"] as SolidColorBrush;
+            Context.Debug(
+                $"配色已应用: hue={args.Hue}, light={args.LightAdjust:0.##}, chroma={args.ChromaAdjust:0.##}, " +
+                $"ColorBrush3={brush?.Color.ToString() ?? "(null)"}");
+        }
+    }
+
+    /// <summary>
+    /// 应用标题栏、底板、内容区域的独立颜色覆盖。空字符串表示跟随主题配色。
+    /// </summary>
+    public static void ApplySurfaceOverrides()
+    {
+        if (Lifecycle.CurrentState <= LifecycleState.Loading) return;
+        var resources = Lifecycle.CurrentApplication.Resources;
+        var theme = Config.Preference.Theme;
+
+        ApplySurfaceColor(resources, "ColorBrushTitleBar", theme.TitleBarColor, "ColorBrush3");
+        ApplySurfaceColor(resources, "ColorBrushContent", theme.ContentColor, "ColorBrushTransparentBackground");
+        // 底板默认由灰度配色给出（每轮刷新都会重算），这里只处理显式覆盖
+        ApplySurfaceColor(resources, "ColorBrushBackground", theme.BaseColor, null);
+
+        // 文本颜色：亮色/深色分别覆盖未选中文本，已选中文本在两个模式下共用
+        var unselectedText = IsDarkMode ? theme.TextDarkColor : theme.TextLightColor;
+        ApplySurfaceColor(resources, "ColorBrush1", unselectedText, null);
+        // 列表项会按高度分别使用 ColorBrush3 / ColorBrush2，这里一起覆盖
+        ApplySurfaceColor(resources, "ColorBrush2", theme.TextSelectedColor, null);
+        ApplySurfaceColor(resources, "ColorBrush3", theme.TextSelectedColor, null);
+
+        // 顶栏标题与各导航按钮：未覆盖时分别回落到白色与当前主题强调色
+        ApplySurfaceColor(resources, "ColorBrushTitleLogo", theme.TitleLogoColor, "ColorBrushWhite");
+        // 顶栏未选中按钮跟随“白色未选中文本”设置；选中按钮各自使用独立颜色
+        ApplySurfaceColor(resources, "ColorBrushTabUnselected", theme.TextDarkColor, "ColorBrushWhite");
+        ApplySurfaceColor(resources, "ColorBrushTabLaunch", theme.TabLaunchColor, "ColorBrush3");
+        ApplySurfaceColor(resources, "ColorBrushTabDownload", theme.TabDownloadColor, "ColorBrush3");
+        ApplySurfaceColor(resources, "ColorBrushTabSettings", theme.TabSettingsColor, "ColorBrush3");
+        ApplySurfaceColor(resources, "ColorBrushTabTools", theme.TabToolsColor, "ColorBrush3");
+        // 对应按钮设置了独立颜色时，未选中状态也使用该颜色
+        ApplySurfaceColor(resources, "ColorBrushTabLaunchUnselected", theme.TabLaunchColor, "ColorBrushTabUnselected");
+        ApplySurfaceColor(resources, "ColorBrushTabDownloadUnselected", theme.TabDownloadColor, "ColorBrushTabUnselected");
+        ApplySurfaceColor(resources, "ColorBrushTabSettingsUnselected", theme.TabSettingsColor, "ColorBrushTabUnselected");
+        ApplySurfaceColor(resources, "ColorBrushTabToolsUnselected", theme.TabToolsColor, "ColorBrushTabUnselected");
+
+        // 控件边框、滑动条与窗口右上角按钮
+        ApplySurfaceColor(resources, "ColorBrushBorder", theme.BorderColor, "ColorBrush3");
+        ApplySurfaceColor(resources, "ColorBrushBorderHover", theme.BorderHoverColor, "ColorBrush3");
+        ApplySurfaceColor(resources, "ColorBrushBorderFocus", theme.BorderFocusColor, "ColorBrush3");
+        ApplySurfaceColor(resources, "ColorBrushSlider", theme.SliderColor, "ColorBrush3");
+        ApplySurfaceColor(resources, "ColorBrushWindowButton", theme.WindowButtonColor, "ColorBrushWhite");
+    }
+
+    private static void ApplySurfaceColor(ResourceDictionary resources, string key, string? overrideValue,
+        string? fallbackKey)
+    {
+        if (string.IsNullOrWhiteSpace(overrideValue))
+        {
+            // 未覆盖时回到主题默认值；底板没有 fallback，交给灰度配色处理
+            if (fallbackKey is null) return;
+            if (resources[fallbackKey] is Brush fallback) resources[key] = fallback;
+            return;
+        }
+
+        try
+        {
+            if (ColorConverter.ConvertFromString(overrideValue) is not Color color) return;
+            var brush = new SolidColorBrush(color);
+            brush.Freeze();
+            resources[key] = brush;
+        }
+        catch (Exception)
+        {
+            // 非法颜色忽略，保持当前值
+        }
+    }
+
+    /// <summary>
+    /// 立即按当前配置重新计算并应用配色，用于自定义色相滑块的实时预览。
+    /// 必须由界面线程调用。
+    /// </summary>
+    public static void RefreshCustomColor()
+    {
+        if (Lifecycle.CurrentState <= LifecycleState.Loading) return;
+        var app = Lifecycle.CurrentApplication;
+        if (app.Dispatcher.CheckAccess())
+        {
+            ApplyColorResources();
+            ColorThemeChanged?.Invoke(CurrentTheme);
+            return;
+        }
+
+        app.Dispatcher.BeginInvoke(() =>
+        {
+            ApplyColorResources();
+            ColorThemeChanged?.Invoke(CurrentTheme);
+        });
     }
 }

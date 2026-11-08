@@ -1,4 +1,4 @@
-﻿using System.Security.Authentication;
+using System.Security.Authentication;
 using System.Windows;
 using PCL.Core.App.Localization;
 using PCL.Core.Minecraft.Profile;
@@ -81,7 +81,7 @@ public partial class PageLoginMs
                 {
                     ModBase.Log(
                         ex,
-                        Lang.Text("Launch.Account.Microsoft.LoginFailed.Title"),
+                        Lang.Text("Launch.Account.Microsoft.LoginFailed.Title") + "\r\n" + ex.Message,
                         ModBase.LogLevel.Msgbox,
                         userSummary: Lang.Text("Launch.Account.Microsoft.LoginFailed.Title"));
                 }

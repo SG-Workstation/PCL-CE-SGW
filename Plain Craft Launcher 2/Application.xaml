@@ -77,6 +77,26 @@
             <SolidColorBrush x:Key="ColorBrushSemiTransparent">#01eaf2fe</SolidColorBrush>
             <SolidColorBrush x:Key="ColorBrushTransparentBackground" Color="#d2fbfbfb" />
             <SolidColorBrush x:Key="ColorBrushBackground">#fbfbfb</SolidColorBrush>
+            <!-- 可独立覆盖的界面区块颜色：标题栏、内容区域（底板沿用 ColorBrushBackground） -->
+            <SolidColorBrush x:Key="ColorBrushTitleBar" Color="#1370f3" />
+            <SolidColorBrush x:Key="ColorBrushContent" Color="#d2fbfbfb" />
+            <!-- 顶栏标题与导航按钮，运行时由 ThemeService 按配置覆盖 -->
+            <SolidColorBrush x:Key="ColorBrushTitleLogo" Color="#ffffff" />
+            <SolidColorBrush x:Key="ColorBrushTabUnselected" Color="#ffffff" />
+            <SolidColorBrush x:Key="ColorBrushTabLaunchUnselected" Color="#ffffff" />
+            <SolidColorBrush x:Key="ColorBrushTabDownloadUnselected" Color="#ffffff" />
+            <SolidColorBrush x:Key="ColorBrushTabSettingsUnselected" Color="#ffffff" />
+            <SolidColorBrush x:Key="ColorBrushTabToolsUnselected" Color="#ffffff" />
+            <SolidColorBrush x:Key="ColorBrushTabLaunch" Color="#1370f3" />
+            <SolidColorBrush x:Key="ColorBrushTabDownload" Color="#1370f3" />
+            <SolidColorBrush x:Key="ColorBrushTabSettings" Color="#1370f3" />
+            <SolidColorBrush x:Key="ColorBrushTabTools" Color="#1370f3" />
+            <!-- 控件边框、滑动条与右上角窗口按钮 -->
+            <SolidColorBrush x:Key="ColorBrushBorder" Color="#1370f3" />
+            <SolidColorBrush x:Key="ColorBrushBorderHover" Color="#1370f3" />
+            <SolidColorBrush x:Key="ColorBrushBorderFocus" Color="#1370f3" />
+            <SolidColorBrush x:Key="ColorBrushSlider" Color="#1370f3" />
+            <SolidColorBrush x:Key="ColorBrushWindowButton" Color="#eaf2fe" />
             <SolidColorBrush x:Key="ColorBrushToolTip">#e5ffffff</SolidColorBrush>
             <SolidColorBrush x:Key="ColorBrushMemory">#000000</SolidColorBrush>
             <SolidColorBrush x:Key="ColorBrushFatal">#c23616</SolidColorBrush>
@@ -324,7 +344,7 @@
                 <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
                 <Setter Property="UndoLimit" Value="15" />
                 <Setter Property="MaxLength" Value="1000" />
-                <Setter Property="BorderBrush" Value="{DynamicResource ColorBrushBg0}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource ColorBrushBorder}" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="local:MyTextBox">
@@ -367,7 +387,7 @@
                 <Setter Property="SelectionBrush" Value="{DynamicResource ColorBrush3}" />
                 <Setter Property="Foreground" Value="{DynamicResource ColorBrush1}" />
                 <Setter Property="Background" Value="{DynamicResource ColorBrushHalfWhite}" />
-                <Setter Property="BorderBrush" Value="{DynamicResource ColorBrushBg0}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource ColorBrushBorder}" />
                 <Setter Property="KeyboardNavigation.TabNavigation" Value="None" />
                 <Setter Property="HorizontalContentAlignment" Value="Left" />
                 <Setter Property="FocusVisualStyle" Value="{x:Null}" />
@@ -391,13 +411,13 @@
                                 </Trigger>
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Trigger.Setters>
-                                        <Setter Property="BorderBrush" Value="{DynamicResource ColorBrush4}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource ColorBrushBorder}" />
                                         <Setter Property="Background" Value="{DynamicResource ColorBrush7}" />
                                     </Trigger.Setters>
                                 </Trigger>
                                 <Trigger Property="IsFocused" Value="True">
                                     <Trigger.Setters>
-                                        <Setter Property="BorderBrush" Value="{DynamicResource ColorBrush3}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource ColorBrushBorder}" />
                                         <Setter Property="Background" Value="{DynamicResource ColorBrush7}" />
                                     </Trigger.Setters>
                                 </Trigger>

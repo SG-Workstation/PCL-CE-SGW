@@ -24,15 +24,6 @@
                         <RowDefinition Height="8" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="{DynamicResource Setup.Misc.System.Announcement}" Margin="0,0,25,0"
-                               Grid.Row="0" />
-                    <local:MyComboBox x:Name="ComboSystemActivity" Tag="SystemSystemActivity" Grid.Column="1"
-                                      Grid.Row="0"
-                                      SelectionChanged="ComboSystemActivity_OnSelectionChanged">
-                        <local:MyComboBoxItem Content="{DynamicResource Setup.Misc.System.Announcement.All}" ToolTip="{DynamicResource Setup.Misc.System.Announcement.All.ToolTip}" />
-                        <local:MyComboBoxItem Content="{DynamicResource Setup.Misc.System.Announcement.ImportantOnly}" />
-                        <local:MyComboBoxItem Content="{DynamicResource Setup.Misc.System.Announcement.Disabled}" />
-                    </local:MyComboBox>
                     <TextBlock Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{DynamicResource Setup.Misc.System.MaxFps}"
                                Margin="0,0,25,0" />
                     <local:MySlider x:Name="SliderAniFPS" Grid.Row="2" Tag="UiAniFPS" MaxValue="59" Value="59"

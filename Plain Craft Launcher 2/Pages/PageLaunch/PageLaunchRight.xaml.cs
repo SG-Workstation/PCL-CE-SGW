@@ -203,23 +203,6 @@ public partial class PageLaunchRight : IRefreshable
                     url = "https://bangumi.p.kaphia.qzz.io";
                     content = LoadFromNetwork(url);
                     break;
-                
-                case 14:
-                    LogWrapper.Info("[Page] 主页预设：PCL CE 公告栏");
-                    url = "https://s3.pysio.online/pcl2-ce/apiv2/pages/announce.xaml";
-                    content = LoadFromNetwork(url);
-                    break;
-                
-                case 15:
-                    LogWrapper.Info("[Page] 主页预设：Minecraft 信息流");
-                    Dispatcher.Invoke(() =>
-                    {
-                        if (ModMain.frmHomepageNews is null)
-                            ModMain.frmHomepageNews = new PageHomepageNewsView();
-                        PanCustom.Children.Clear();
-                        PanCustom.Children.Add(ModMain.frmHomepageNews);
-                    });
-                    return;
             }
         }
 

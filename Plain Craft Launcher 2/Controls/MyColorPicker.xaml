@@ -1,0 +1,129 @@
+<UserControl x:Class="PCL.MyColorPicker"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:PCL"
+             mc:Ignorable="d"
+             d:DesignHeight="238" d:DesignWidth="420"
+             MinWidth="320"
+             FocusVisualStyle="{x:Null}"
+             UseLayoutRounding="True" SnapsToDevicePixels="True">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- 连续取色区：左侧饱和度/明度方块，右侧色相条（Photoshop 风格） -->
+        <Grid Grid.Row="0" Height="160">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="18" />
+            </Grid.ColumnDefinitions>
+
+            <!-- 饱和度（横向）与明度（纵向） -->
+            <Border x:Name="PanSv" Grid.Column="0" Margin="0,0,8,0"
+                    CornerRadius="4" BorderThickness="1"
+                    Background="{DynamicResource ColorBrushToolTip}"
+                    BorderBrush="{DynamicResource ColorBrushGray4}"
+                    ClipToBounds="True" SnapsToDevicePixels="True">
+                <Grid x:Name="SvSurface" Background="Transparent" ClipToBounds="True"
+                      Cursor="Cross">
+                    <Rectangle x:Name="RectHueBase" Fill="#FFFF0000" />
+                    <!-- 饱和度：左侧白 → 右侧透明 -->
+                    <Rectangle>
+                        <Rectangle.Fill>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                <GradientStop Color="#FFFFFFFF" Offset="0" />
+                                <GradientStop Color="#00FFFFFF" Offset="1" />
+                            </LinearGradientBrush>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <!-- 明度：顶部透明 → 底部黑 -->
+                    <Rectangle>
+                        <Rectangle.Fill>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#00000000" Offset="0" />
+                                <GradientStop Color="#FF000000" Offset="1" />
+                            </LinearGradientBrush>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <Canvas x:Name="SvCursorLayer" IsHitTestVisible="False" ClipToBounds="True">
+                        <Ellipse x:Name="SvCursor" Width="12" Height="12"
+                                 Stroke="White" StrokeThickness="2" Fill="#22000000">
+                            <Ellipse.Effect>
+                                <DropShadowEffect Color="Black" BlurRadius="2" ShadowDepth="0" Opacity="0.85" />
+                            </Ellipse.Effect>
+                        </Ellipse>
+                    </Canvas>
+                </Grid>
+            </Border>
+
+            <!-- 色相条：顶部 0° 红 → 底部 360° 红 -->
+            <Border x:Name="PanHue" Grid.Column="1"
+                    CornerRadius="4" BorderThickness="1"
+                    Background="{DynamicResource ColorBrushToolTip}"
+                    BorderBrush="{DynamicResource ColorBrushGray4}"
+                    ClipToBounds="True" SnapsToDevicePixels="True">
+                <Grid x:Name="HueSurface" Background="Transparent" ClipToBounds="True"
+                      Cursor="Hand">
+                    <Rectangle>
+                        <Rectangle.Fill>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#FFFF0000" Offset="0" />
+                                <GradientStop Color="#FFFFFF00" Offset="0.166667" />
+                                <GradientStop Color="#FF00FF00" Offset="0.333333" />
+                                <GradientStop Color="#FF00FFFF" Offset="0.5" />
+                                <GradientStop Color="#FF0000FF" Offset="0.666667" />
+                                <GradientStop Color="#FFFF00FF" Offset="0.833333" />
+                                <GradientStop Color="#FFFF0000" Offset="1" />
+                            </LinearGradientBrush>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <Canvas x:Name="HueCursorLayer" IsHitTestVisible="False" ClipToBounds="True">
+                        <Border x:Name="HueCursor" Width="16" Height="5"
+                                CornerRadius="2" BorderThickness="1.5"
+                                BorderBrush="White" Background="#40000000" />
+                    </Canvas>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- 不透明度 -->
+        <Grid Grid.Row="1" Margin="0,10,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="40" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="{DynamicResource Setup.Ui.ColorPicker.Alpha}" VerticalAlignment="Center"
+                       Foreground="{DynamicResource ColorBrush1}" FontSize="13" />
+            <local:MySlider x:Name="SliderAlpha" Grid.Column="1" Margin="8,0"
+                            VerticalAlignment="Center" MaxValue="100" Value="100" />
+            <TextBlock x:Name="TextAlpha" Grid.Column="2" Text="100%" TextAlignment="Right"
+                       VerticalAlignment="Center" Foreground="{DynamicResource ColorBrush1}" FontSize="13" />
+        </Grid>
+
+        <!-- 最终颜色预览 -->
+        <Grid Grid.Row="2" Margin="0,8,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="82" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="{DynamicResource Setup.Ui.ColorPicker.Preview}" VerticalAlignment="Center"
+                       Foreground="{DynamicResource ColorBrush1}" FontSize="13" />
+            <Border x:Name="BorderPreview" Grid.Column="1" Height="26" Margin="8,0"
+                    CornerRadius="4" BorderThickness="1"
+                    BorderBrush="{DynamicResource ColorBrushGray4}"
+                    Background="{DynamicResource ColorBrushWhite}"
+                    SnapsToDevicePixels="True" />
+            <TextBlock x:Name="TextPreview" Grid.Column="2" Text="#00000000"
+                       TextAlignment="Right" VerticalAlignment="Center"
+                       FontFamily="Consolas" FontSize="12"
+                       Foreground="{DynamicResource ColorBrush1}" />
+        </Grid>
+    </Grid>
+</UserControl>

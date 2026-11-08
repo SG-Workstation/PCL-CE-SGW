@@ -1,7 +1,9 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using PCL.Core.App;
+using PCL.Core.UI.Theme;
 
 using PCL.Core.App.Localization;
 namespace PCL;
@@ -35,7 +37,21 @@ public partial class MySlider
         MouseLeave += (_, _) => RefreshColor();
         MouseEnter += (_, _) => MySlider_MouseEnter();
         KeyDown += MySlider_KeyDown;
+        Loaded += (_, _) =>
+        {
+            ThemeService.ColorModeChanged += OnThemeChanged;
+            ThemeService.ColorThemeChanged += OnThemeChanged;
+        };
+        Unloaded += (_, _) =>
+        {
+            ThemeService.ColorModeChanged -= OnThemeChanged;
+            ThemeService.ColorThemeChanged -= OnThemeChanged;
+        };
     }
+
+    private void OnThemeChanged(bool isDarkMode, ColorTheme theme) => Dispatcher.Invoke(RefreshColor);
+
+    private void OnThemeChanged(ColorTheme theme) => Dispatcher.Invoke(RefreshColor);
 
     public int MaxValue
     {
@@ -211,14 +227,14 @@ public partial class MySlider
             {
                 if (ModMain.dragControl is not null && ModMain.dragControl.Equals(this) || IsMouseOver)
                 {
-                    foregroundName = "ColorBrush3";
-                    dotFillName = "ColorBrush3";
+                    foregroundName = "ColorBrushSlider";
+                    dotFillName = "ColorBrushSlider";
                     animationTime = 40;
                 }
                 else
                 {
-                    foregroundName = "ColorBrushBg0";
-                    dotFillName = "ColorBrushBg0";
+                    foregroundName = "ColorBrushSlider";
+                    dotFillName = "ColorBrushSlider";
                     animationTime = 100;
                 }
             }

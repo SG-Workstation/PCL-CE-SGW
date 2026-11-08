@@ -43,6 +43,10 @@
         <DefineConstants Condition="'$(Configuration)' == 'Release' Or '$(Configuration)' == 'Publish'">RELEASE;PUBLISH</DefineConstants>
         <DefineConstants Condition="'$(Configuration)' == 'Beta'">BETA;PUBLISH</DefineConstants>
     </PropertyGroup>
+    <!-- 本机硬编码密钥：只有存在 App\LocalSecrets.cs 时才启用（该文件不入库） -->
+    <PropertyGroup Condition="Exists('$(MSBuildProjectDirectory)\App\LocalSecrets.cs')">
+        <DefineConstants>$(DefineConstants);LOCAL_SECRETS</DefineConstants>
+    </PropertyGroup>
     <!-- NuGet 引用 -->
     <ItemGroup>
         <!-- UI -->

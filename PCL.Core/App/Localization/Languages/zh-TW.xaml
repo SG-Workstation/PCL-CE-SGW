@@ -2466,6 +2466,8 @@
     <sys:String x:Key="Setup.About.Licenses.Title">許可與版權宣告</sys:String>
     <sys:String x:Key="Setup.About.Licenses.ViewLicense">檢視許可檔案</sys:String>
     <sys:String x:Key="Setup.About.Licenses.ViewWebsite">檢視來源網站</sys:String>
+    <sys:String x:Key="Setup.About.Maintainer.Info">PCL CE SGW 的開發者與維護者！</sys:String>
+    <sys:String x:Key="Setup.About.Maintainer.Name">SG Workstation</sys:String>
     <sys:String x:Key="Setup.About.OriginalAuthor.Info">Plain Craft Launcher 的原作者！</sys:String>
     <sys:String x:Key="Setup.About.OriginalAuthor.Name">龙腾猫跃（龍騰貓躍）</sys:String>
     <sys:String x:Key="Setup.About.SourceCode">檢視原始碼</sys:String>
@@ -2961,6 +2963,9 @@
 
     <!-- Setup.Ui -->
 
+    <sys:String x:Key="Setup.Ui.ColorPicker.Alpha">不透明度</sys:String>
+    <sys:String x:Key="Setup.Ui.ColorPicker.Brightness">明度</sys:String>
+    <sys:String x:Key="Setup.Ui.ColorPicker.Preview">預覽</sys:String>
     <sys:String x:Key="Setup.Ui.Error.BackgroundVideoUnsupported">重新整理背景內容失敗。該影片檔案可能並非 H.264（AVC）格式。請使用影片轉檔工具將其轉檔為 H.264（AVC）後再試。</sys:String>
     <sys:String x:Key="Setup.Ui.Error.ConfigReset">個人化設定項存在異常，已被自動重設</sys:String>
     <sys:String x:Key="Setup.Ui.Error.InitFailed">初始化個人化設定失敗</sys:String>
@@ -3159,17 +3164,55 @@
 
     <!-- Setup.Ui.Theme -->
 
+    <sys:String x:Key="Setup.Ui.Theme.Chroma">彩度偏移</sys:String>
     <sys:String x:Key="Setup.Ui.Theme.Color.CatBlue">龍貓藍</sys:String>
     <sys:String x:Key="Setup.Ui.Theme.Color.CrashBlue">當機藍</sys:String>
     <sys:String x:Key="Setup.Ui.Theme.Color.Hmcl">HMCL</sys:String>
     <sys:String x:Key="Setup.Ui.Theme.Color.SkyBlue">天空藍</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorReset">跟隨主題</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget">調整對象</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.Base">底板</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.Border">邊框</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.BorderHover">邊框（懸停）</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.BorderFocus">邊框（聚焦）</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.Content">內容區域</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.TextBlack">黑色未選中文字</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.TabDownload">下載按鈕</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.TabLaunch">啟動按鈕</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.TabSettings">設定按鈕</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.Slider">滑動條</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.TabTools">工具按鈕</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.TextSelected">藍色已選中文字</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.TextWhite">白色未選中文字</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.TitleLogo">頂欄標題</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.WindowButton">視窗按鈕</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.Theme">主題色</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.TitleBar">標題列</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.CustomColor">完全自訂主題色</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.CustomColor.ToolTip">啟用後可使用任意色相，不再侷限於藍色預設</sys:String>
     <sys:String x:Key="Setup.Ui.Theme.Dark">深色</sys:String>
     <sys:String x:Key="Setup.Ui.Theme.DarkColor">深色配色</sys:String>
     <sys:String x:Key="Setup.Ui.Theme.DarkColor.ToolTip">在深色模式下預設的主題配色</sys:String>
     <sys:String x:Key="Setup.Ui.Theme.FollowSystem">跟隨系統</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.Hue">色相</sys:String>
     <sys:String x:Key="Setup.Ui.Theme.Light">淺色</sys:String>
     <sys:String x:Key="Setup.Ui.Theme.LightColor">淺色配色</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.Lightness">明度偏移</sys:String>
     <sys:String x:Key="Setup.Ui.Theme.Title">主題</sys:String>
+    <sys:String x:Key="Setup.Ui.ThemePack.Applied">主題已套用！</sys:String>
+    <sys:String x:Key="Setup.Ui.ThemePack.Description">把主題包放進 PCL/Themes 目錄後重新掃描即可啟用；支援自訂配色、字型、桌布與頁面配置，格式見該目錄下的 README.md。</sys:String>
+    <sys:String x:Key="Setup.Ui.ThemePack.Export">匯出目前外觀</sys:String>
+    <sys:String x:Key="Setup.Ui.ThemePack.Export.DefaultName">我的主題</sys:String>
+    <sys:String x:Key="Setup.Ui.ThemePack.Export.Fail">匯出失敗：{0}</sys:String>
+    <sys:String x:Key="Setup.Ui.ThemePack.Export.Message">輸入主題名稱，目前的配色、字型、桌布與版面配置會被包裝到 PCL/Themes 目錄</sys:String>
+    <sys:String x:Key="Setup.Ui.ThemePack.Export.Success">已匯出主題：{0}</sys:String>
+    <sys:String x:Key="Setup.Ui.ThemePack.Export.Title">匯出主題</sys:String>
+    <sys:String x:Key="Setup.Ui.ThemePack.None">不使用（內建配色）</sys:String>
+    <sys:String x:Key="Setup.Ui.ThemePack.OpenFolder">開啟主題資料夾</sys:String>
+    <sys:String x:Key="Setup.Ui.ThemePack.Rescan">重新掃描</sys:String>
+    <sys:String x:Key="Setup.Ui.ThemePack.Rescanned">主題清單已更新</sys:String>
+    <sys:String x:Key="Setup.Ui.ThemePack.Select">主題包</sys:String>
+    <sys:String x:Key="Setup.Ui.ThemePack.Title">自訂主題</sys:String>
 
     <!-- Setup.Update -->
 

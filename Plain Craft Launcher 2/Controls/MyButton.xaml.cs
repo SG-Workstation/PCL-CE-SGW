@@ -3,6 +3,8 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
+using PCL.Core.App;
+using PCL.Core.UI.Theme;
 
 namespace PCL;
 
@@ -56,7 +58,23 @@ public partial class MyButton
         MouseEnter += (_, _) => Button_MouseEnter();
         MouseLeftButtonUp += (_, _) => Button_MouseUp();
         MouseLeave += (_, _) => Button_MouseLeave();
+        Loaded += (_, _) =>
+        {
+            ThemeService.ColorModeChanged += OnThemeChanged;
+            ThemeService.ColorThemeChanged += OnThemeChanged;
+        };
+        Unloaded += (_, _) =>
+        {
+            ThemeService.ColorModeChanged -= OnThemeChanged;
+            ThemeService.ColorThemeChanged -= OnThemeChanged;
+        };
     }
+
+    private void OnThemeChanged(bool isDarkMode, ColorTheme theme) =>
+        Dispatcher.Invoke(() => RefreshColor());
+
+    private void OnThemeChanged(ColorTheme theme) =>
+        Dispatcher.Invoke(() => RefreshColor());
 
     public InlineCollection Inlines => LabText.Inlines;
 
@@ -101,8 +119,8 @@ public partial class MyButton
     {
         return ColorType switch
         {
-            ColorState.Normal => IsMouseOver ? "ColorBrush3" : "ColorBrush1",
-            ColorState.Highlight => IsMouseOver ? "ColorBrush3" : "ColorBrush2",
+            ColorState.Normal => IsMouseOver ? "ColorBrushBorderHover" : "ColorBrush1",
+            ColorState.Highlight => "ColorBrushBorderHover",
             ColorState.Red => IsMouseOver ? "ColorBrushRedLight" : "ColorBrushRedDark",
             _ => "ColorBrush1"
         };

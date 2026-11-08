@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Windows.Controls;
 using NAudio;
 using NAudio.Wave;
@@ -151,7 +151,7 @@ public static class ModMusic
     /// </summary>
     /// <param name="forceReload">强制全部重新载入列表。</param>
     /// <param name="preventFirst">在重载列表时避免让某项成为第一项。</param>
-    private static void MusicListInit(bool forceReload, string preventFirst = null)
+    internal static void MusicListInit(bool forceReload, string preventFirst = null)
     {
         if (forceReload)
             musicAllList = null;
@@ -171,6 +171,13 @@ public static class ModMusic
                         continue;
                     musicAllList.Add(file.FullName);
                 }
+            }
+
+            // 主题目录内的背景音乐（PCL/Themes/<id>/assets/music），每次刷新都补齐
+            foreach (var themeMusic in ThemePackManager.MusicFiles)
+            {
+                if (!musicAllList.Contains(themeMusic, StringComparer.OrdinalIgnoreCase))
+                    musicAllList.Add(themeMusic);
             }
 
             // 根据设置决定是否随机

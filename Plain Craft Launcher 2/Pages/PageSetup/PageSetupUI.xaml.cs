@@ -1,7 +1,8 @@
-﻿using System.IO;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using PCL.Core.App;
 using PCL.Core.App.Configuration;
 using PCL.Core.UI;
@@ -12,15 +13,18 @@ namespace PCL;
 
 public partial class PageSetupUI
 {
-    public string[] ThemeColors => Basics.IsAprilFool 
-        ? [Lang.Text("Setup.Ui.Theme.Color.SkyBlue"), Lang.Text("Setup.Ui.Theme.Color.CatBlue"), Lang.Text("Setup.Ui.Theme.Color.CrashBlue"), Lang.Text("Setup.Ui.Theme.Color.Hmcl")]
-        : [Lang.Text("Setup.Ui.Theme.Color.SkyBlue"), Lang.Text("Setup.Ui.Theme.Color.CatBlue"), Lang.Text("Setup.Ui.Theme.Color.CrashBlue")];
-    
     public new bool isLoaded;
+
+    /// <summary>
+    ///     当前实际显示的背景内容路径（图片或视频），供主题导出使用。
+    /// </summary>
+    public static string? CurrentBackgroundPath;
 
     public PageSetupUI()
     {
         InitializeComponent();
+        PickerColor.SelectedColorChanged += PickerColor_SelectedColorChanged;
+        PickerColor.SelectedHueChanged += PickerColor_SelectedHueChanged;
         Loaded += PageSetupUI_Loaded;
         Loaded += (_, _) => HiddenRefresh();
     }
@@ -34,14 +38,14 @@ public partial class PageSetupUI
         Reload(); // #4826，在每次进入页面时都刷新一下
         ModAnimation.AniControlEnabled -= 1;
 
+        ThemePackReloadList();
+
         // 非重复加载部分
         if (isLoaded)
             return;
         isLoaded = true;
 
         SliderLoad();
-
-        PanLauncherHide.Visibility = Visibility.Visible;
     }
 
     public void Reload()
@@ -51,9 +55,7 @@ public partial class PageSetupUI
             // 启动器
             SliderLauncherOpacity.Value = Config.Preference.Theme.WindowOpacity;
             CheckLauncherLogo.Checked = Config.Preference.ShowStartupLogo;
-            ComboDarkMode.SelectedIndex = (int)Config.Preference.Theme.ColorMode;
-            ComboDarkColor.SelectedIndex = (int)Config.Preference.Theme.DarkColor;
-            ComboLightColor.SelectedIndex = (int)Config.Preference.Theme.LightColor;
+            ReloadCustomColor();
             CheckShowLaunchingHint.Checked = Config.Preference.ShowLaunchingHint;
 
             // 字体设置
@@ -128,14 +130,11 @@ public partial class PageSetupUI
             CheckHiddenSetupGameManage.Checked = uiHidden.SetupGameManage;
             CheckHiddenSetupJava.Checked = uiHidden.SetupJava;
             CheckHiddenLauncherMisc.Checked = uiHidden.SetupLauncherMisc;
-            CheckHiddenSetupUpdate.Checked = uiHidden.SetupUpdate;
-            CheckHiddenSetupGameLink.Checked = uiHidden.SetupGameLink;
             CheckHiddenSetupAbout.Checked = uiHidden.SetupAbout;
             CheckHiddenSetupFeedback.Checked = uiHidden.SetupFeedback;
             CheckHiddenSetupLog.Checked = uiHidden.SetupLog;
 
             // 子页面 工具
-            CheckHiddenToolsGameLink.Checked = uiHidden.ToolsGameLink;
             CheckHiddenToolsTest.Checked = uiHidden.ToolsTest;
 
             // 子页面 实例设置
@@ -246,10 +245,94 @@ public partial class PageSetupUI
         if (ModAnimation.AniControlEnabled == 0) Config.Preference.MotdFont = ComboUiMotdFont.SelectedFontTag;
     }
 
+    // 自定义主题包
+    private bool _themePackUpdating;
+
+    /// <summary>
+    ///     重新扫描并刷新主题包下拉列表。
+    /// </summary>
+    public void ThemePackReloadList()
+    {
+        if (ComboThemePack is null)
+            return;
+        _themePackUpdating = true;
+        try
+        {
+            var installed = ThemePackManager.InstalledIds;
+            var items = new List<string> { Lang.Text("Setup.Ui.ThemePack.None") };
+            items.AddRange(installed);
+            ComboThemePack.ItemsSource = items;
+
+            var active = PCL.Core.UI.Theme.Packs.ThemePackService.ActiveId;
+            var index = -1;
+            for (var i = 0; i < installed.Count; i++)
+                if (string.Equals(installed[i], active, StringComparison.OrdinalIgnoreCase))
+                {
+                    index = i;
+                    break;
+                }
+
+            ComboThemePack.SelectedIndex = index < 0 ? 0 : index + 1;
+        }
+        finally
+        {
+            _themePackUpdating = false;
+        }
+    }
+
+    private void ComboThemePack_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_themePackUpdating || ModAnimation.AniControlEnabled != 0)
+            return;
+
+        var installed = ThemePackManager.InstalledIds;
+        var index = ComboThemePack.SelectedIndex;
+        var id = index <= 0 || index > installed.Count ? "" : installed[index - 1];
+        ThemePackManager.Apply(id);
+        ThemePackReloadList();
+        HintService.Hint(Lang.Text("Setup.Ui.ThemePack.Applied"), HintType.Success);
+    }
+
+    private void BtnThemePackOpen_Click(object sender, MouseButtonEventArgs e)
+    {
+        Directory.CreateDirectory(ThemePackManager.Root);
+        ModBase.OpenExplorer(ThemePackManager.Root);
+    }
+
+    private void BtnThemePackRescan_Click(object sender, MouseButtonEventArgs e)
+    {
+        ThemePackManager.Reload();
+        ThemePackReloadList();
+        HintService.Hint(Lang.Text("Setup.Ui.ThemePack.Rescanned"), HintType.Success);
+    }
+
+    private void BtnThemePackExport_Click(object sender, MouseButtonEventArgs e)
+    {
+        var name = ModMain.MyMsgBoxInput(
+            Lang.Text("Setup.Ui.ThemePack.Export.Title"),
+            Lang.Text("Setup.Ui.ThemePack.Export.Message"),
+            Lang.Text("Setup.Ui.ThemePack.Export.DefaultName"));
+        if (string.IsNullOrWhiteSpace(name))
+            return;
+
+        var path = ThemePackExporter.Export(name, out var error);
+        if (path is null)
+        {
+            ModMain.MyMsgBox(Lang.Text("Setup.Ui.ThemePack.Export.Fail", error),
+                Lang.Text("Setup.Ui.ThemePack.Export.Title"), isWarn: true);
+            return;
+        }
+
+        ThemePackReloadList();
+        HintService.Hint(Lang.Text("Setup.Ui.ThemePack.Export.Success", Path.GetFileName(path)), HintType.Success);
+    }
+
     // 背景图片
     private void BtnUIBgOpen_Click(object sender, MouseButtonEventArgs e)
     {
-        ModBase.OpenExplorer(ModBase.exePath + @"PCL\Pictures\");
+        var folder = ThemePackManager.GetBackgroundFolder();
+        Directory.CreateDirectory(folder);
+        ModBase.OpenExplorer(folder);
     }
 
     private void BtnBackgroundRefresh_Click(object sender, MouseButtonEventArgs e)
@@ -304,12 +387,20 @@ public partial class PageSetupUI
     {
         try
         {
-            // 获取可用的图片文件
+            // 获取可用的图片/视频文件：启用主题时优先使用主题目录里的 assets/backgrounds
             Directory.CreateDirectory(ModBase.exePath + @"PCL\Pictures\");
-            var pic = ModBase.EnumerateFiles(ModBase.exePath + @"PCL\Pictures\").Where(file =>
-                    !(file.Extension.Equals(".ini", StringComparison.OrdinalIgnoreCase) ||
-                      file.Extension.Equals(".db", StringComparison.OrdinalIgnoreCase))).Select(file => file.FullName)
-                .ToList();
+            List<string> pic;
+            if (ThemePackManager.BackgroundFiles.Count > 0)
+            {
+                pic = new List<string>(ThemePackManager.BackgroundFiles);
+            }
+            else
+            {
+                pic = ModBase.EnumerateFiles(ModBase.exePath + @"PCL\Pictures\").Where(file =>
+                        !(file.Extension.Equals(".ini", StringComparison.OrdinalIgnoreCase) ||
+                          file.Extension.Equals(".db", StringComparison.OrdinalIgnoreCase))).Select(file => file.FullName)
+                    .ToList();
+            }
 
             // 视频加载异常处理
 
@@ -350,6 +441,7 @@ public partial class PageSetupUI
             {
                 if (refresh)
                 {
+                    CurrentBackgroundPath = null;
                     if (ModMain.frmMain.ImgBack.Visibility == Visibility.Collapsed)
                     {
                         if (isHint)
@@ -371,6 +463,7 @@ public partial class PageSetupUI
                 if (refresh)
                 {
                     var address = RandomUtils.PickRandom(pic);
+                    CurrentBackgroundPath = address;
                     try
                     {
                         ModMain.frmMain.ImgBack.Background = null;
@@ -659,18 +752,231 @@ public partial class PageSetupUI
         ModBase.OpenWebsite("https://docs.pclc.cc/ce/customization/xaml-format");
     }
 
-    // 主题
-    private void ThemeColor_Change(object senderRaw, SelectionChangedEventArgs e)
+    // 调色板（主题色 / 界面区块 / 文本 / 顶栏 / 控件颜色）
+    private enum ColorTarget
     {
-        var sender = (MyComboBox)senderRaw;
-        SetByTag(sender.Tag?.ToString(), sender.SelectedIndex);
+        Theme = 0,
+        TitleBar,
+        Base,
+        Content,
+        TextLight,
+        TextDark,
+        TextSelected,
+        TitleLogo,
+        TabLaunch,
+        TabDownload,
+        TabSettings,
+        TabTools,
+        Border,
+        BorderHover,
+        BorderFocus,
+        Slider,
+        WindowButton
+    }
+
+    private bool _colorPickerUpdating;
+
+    private ColorTarget CurrentTarget =>
+        (ColorTarget)Math.Clamp(ComboColorTarget.SelectedIndex, 0, (int)ColorTarget.WindowButton);
+
+    /// <summary>
+    ///     从配置加载调色板状态。
+    /// </summary>
+    public void ReloadCustomColor()
+    {
+        _colorPickerUpdating = true;
+        try
+        {
+            if (ComboColorTarget.SelectedIndex < 0)
+                ComboColorTarget.SelectedIndex = 0;
+            SyncPickerFromTarget();
+        }
+        finally
+        {
+            _colorPickerUpdating = false;
+        }
+    }
+
+    /// <summary>
+    ///     把当前调整对象的颜色同步到调色板（不触发回调）。
+    /// </summary>
+    private void SyncPickerFromTarget()
+    {
+        _colorPickerUpdating = true;
+        try
+        {
+            if (CurrentTarget == ColorTarget.Theme)
+            {
+                PickerColor.SetHue(Config.Preference.Theme.CustomHue);
+                return;
+            }
+
+            PickerColor.SetColor(GetTargetColor(CurrentTarget));
+        }
+        finally
+        {
+            _colorPickerUpdating = false;
+        }
+    }
+
+    private static Color GetTargetColor(ColorTarget target)
+    {
+        var theme = Config.Preference.Theme;
+        return target switch
+        {
+            ColorTarget.TitleBar => GetSurfaceColor(theme.TitleBarColor, "ColorBrushTitleBar"),
+            ColorTarget.Base => GetSurfaceColor(theme.BaseColor, "ColorBrushBackground"),
+            ColorTarget.Content => GetSurfaceColor(theme.ContentColor, "ColorBrushContent"),
+            ColorTarget.TextLight => GetUnselectedTextColor(theme.TextLightColor, false),
+            ColorTarget.TextDark => GetUnselectedTextColor(theme.TextDarkColor, true),
+            ColorTarget.TextSelected => GetSurfaceColor(theme.TextSelectedColor, "ColorBrush2"),
+            ColorTarget.TitleLogo => GetSurfaceColor(theme.TitleLogoColor, "ColorBrushTitleLogo"),
+            ColorTarget.TabLaunch => GetSurfaceColor(theme.TabLaunchColor, "ColorBrushTabLaunch"),
+            ColorTarget.TabDownload => GetSurfaceColor(theme.TabDownloadColor, "ColorBrushTabDownload"),
+            ColorTarget.TabSettings => GetSurfaceColor(theme.TabSettingsColor, "ColorBrushTabSettings"),
+            ColorTarget.TabTools => GetSurfaceColor(theme.TabToolsColor, "ColorBrushTabTools"),
+            ColorTarget.Border => GetSurfaceColor(theme.BorderColor, "ColorBrushBorder"),
+            ColorTarget.BorderHover => GetSurfaceColor(theme.BorderHoverColor, "ColorBrushBorderHover"),
+            ColorTarget.BorderFocus => GetSurfaceColor(theme.BorderFocusColor, "ColorBrushBorderFocus"),
+            ColorTarget.Slider => GetSurfaceColor(theme.SliderColor, "ColorBrushSlider"),
+            ColorTarget.WindowButton => GetSurfaceColor(theme.WindowButtonColor, "ColorBrushWindowButton"),
+            _ => Colors.Transparent
+        };
+    }
+
+    private static Color GetSurfaceColor(string? overrideValue, string resourceKey)
+    {
+        if (!string.IsNullOrWhiteSpace(overrideValue) &&
+            ColorConverter.ConvertFromString(overrideValue) is Color parsed)
+            return parsed;
+        return Application.Current.Resources[resourceKey] is SolidColorBrush brush ? brush.Color : Colors.Transparent;
+    }
+
+    /// <summary>
+    ///     取得未选中文本颜色；未覆盖时优先显示当前模式的实际颜色，否则用黑/白占位。
+    /// </summary>
+    private static Color GetUnselectedTextColor(string? overrideValue, bool isDarkMode)
+    {
+        if (!string.IsNullOrWhiteSpace(overrideValue) &&
+            ColorConverter.ConvertFromString(overrideValue) is Color parsed)
+            return parsed;
+        if (ThemeManager.IsDarkMode == isDarkMode &&
+            Application.Current.Resources["ColorBrush1"] is SolidColorBrush brush)
+            return brush.Color;
+        return isDarkMode ? Colors.White : Colors.Black;
+    }
+
+    private void ComboColorTarget_Change(object sender, SelectionChangedEventArgs e)
+    {
+        if (_colorPickerUpdating)
+            return;
+        SyncPickerFromTarget();
+    }
+
+    private void BtnColorReset_Click(object sender, MouseButtonEventArgs e)
+    {
+        var target = CurrentTarget;
+        if (target == ColorTarget.Theme)
+        {
+            Config.Preference.Theme.CustomColorEnabled = false;
+        }
+        else
+        {
+            SetTargetColor(target, "");
+        }
+
+        PCL.Core.UI.Theme.ThemeService.RefreshCustomColor();
+        ThemeManager.ThemeRefresh();
+        SyncPickerFromTarget();
+    }
+
+    private static void SetTargetColor(ColorTarget target, string value)
+    {
+        switch (target)
+        {
+            case ColorTarget.TitleBar: Config.Preference.Theme.TitleBarColor = value; break;
+            case ColorTarget.Base: Config.Preference.Theme.BaseColor = value; break;
+            case ColorTarget.Content: Config.Preference.Theme.ContentColor = value; break;
+            case ColorTarget.TextLight: Config.Preference.Theme.TextLightColor = value; break;
+            case ColorTarget.TextDark: Config.Preference.Theme.TextDarkColor = value; break;
+            case ColorTarget.TextSelected: Config.Preference.Theme.TextSelectedColor = value; break;
+            case ColorTarget.TitleLogo: Config.Preference.Theme.TitleLogoColor = value; break;
+            case ColorTarget.TabLaunch: Config.Preference.Theme.TabLaunchColor = value; break;
+            case ColorTarget.TabDownload: Config.Preference.Theme.TabDownloadColor = value; break;
+            case ColorTarget.TabSettings: Config.Preference.Theme.TabSettingsColor = value; break;
+            case ColorTarget.TabTools: Config.Preference.Theme.TabToolsColor = value; break;
+            case ColorTarget.Border: Config.Preference.Theme.BorderColor = value; break;
+            case ColorTarget.BorderHover: Config.Preference.Theme.BorderHoverColor = value; break;
+            case ColorTarget.BorderFocus: Config.Preference.Theme.BorderFocusColor = value; break;
+            case ColorTarget.Slider: Config.Preference.Theme.SliderColor = value; break;
+            case ColorTarget.WindowButton: Config.Preference.Theme.WindowButtonColor = value; break;
+        }
+    }
+
+    /// <summary>
+    ///     主题色：把色相/明度/彩度写进配置并立即重算整套配色。
+    /// </summary>
+    private void ApplyThemeColor(int hue, int light, int chroma)
+    {
+        Config.Preference.Theme.CustomHue = hue;
+        Config.Preference.Theme.CustomLight = light;
+        Config.Preference.Theme.CustomChroma = chroma;
+        Config.Preference.Theme.CustomColorEnabled = true;
+        PCL.Core.UI.Theme.ThemeService.RefreshCustomColor();
         ThemeManager.ThemeRefresh();
     }
 
-    // 赞助
-    private void BtnLauncherDonate_Click(object sender, MouseButtonEventArgs e)
+    private void PickerColor_SelectedHueChanged(int hue)
     {
-        ModBase.OpenWebsite("https://afdian.com/a/LTCat");
+        if (_colorPickerUpdating || CurrentTarget != ColorTarget.Theme)
+            return;
+        ApplyThemeColor(hue, 0, 0);
+    }
+
+    private void PickerColor_SelectedColorChanged(Color color)
+    {
+        if (_colorPickerUpdating)
+            return;
+
+        if (CurrentTarget == ColorTarget.Theme)
+        {
+            var (hue, saturation, value) = ToHsv(color);
+            ApplyThemeColor(
+                (int)Math.Round(hue),
+                (int)Math.Clamp(Math.Round((value - 0.85d) * 100d), -60, 60),
+                (int)Math.Clamp(Math.Round((saturation - 0.80d) * 125d), -60, 60));
+            return;
+        }
+
+        SetTargetColor(CurrentTarget, $"#{color.A:X2}{color.R:X2}{color.G:X2}{color.B:X2}");
+        // 重新应用会触发 ColorThemeChanged，顶栏按钮、图标按钮与滑动条才能刷新画刷
+        PCL.Core.UI.Theme.ThemeService.RefreshCustomColor();
+        ThemeManager.ThemeRefresh();
+    }
+
+    private static (double Hue, double Saturation, double Value) ToHsv(Color color)
+    {
+        var r = color.R / 255d;
+        var g = color.G / 255d;
+        var b = color.B / 255d;
+        var max = Math.Max(r, Math.Max(g, b));
+        var min = Math.Min(r, Math.Min(g, b));
+        var delta = max - min;
+
+        double hue = 0;
+        if (delta > 0.000001d)
+        {
+            if (Math.Abs(max - r) < 0.000001d)
+                hue = 60d * (((g - b) / delta) % 6d);
+            else if (Math.Abs(max - g) < 0.000001d)
+                hue = 60d * ((b - r) / delta + 2d);
+            else
+                hue = 60d * ((r - g) / delta + 4d);
+        }
+
+        if (hue < 0) hue += 360d;
+        var saturation = max <= 0 ? 0 : delta / max;
+        return (hue, saturation, max);
     }
 
     // 滑动条
@@ -772,11 +1078,6 @@ public partial class PageSetupUI
                     : Visibility.Visible;
                 ModMain.frmSetupLeft.ItemJava.Visibility =
                     !HiddenForceShow && conf.SetupJava ? Visibility.Collapsed : Visibility.Visible;
-                ModMain.frmSetupLeft.ItemUpdate.Visibility =
-                    !HiddenForceShow && conf.SetupUpdate ? Visibility.Collapsed : Visibility.Visible;
-                ModMain.frmSetupLeft.ItemGameLink.Visibility = !HiddenForceShow && conf.SetupGameLink
-                    ? Visibility.Collapsed
-                    : Visibility.Visible;
                 ModMain.frmSetupLeft.ItemAbout.Visibility =
                     !HiddenForceShow && conf.SetupAbout ? Visibility.Collapsed : Visibility.Visible;
                 ModMain.frmSetupLeft.ItemFeedback.Visibility = !HiddenForceShow && conf.SetupFeedback
@@ -789,10 +1090,9 @@ public partial class PageSetupUI
                 {
                     (ModMain.frmSetupLeft.TextGameCategory,
                         !(conf.SetupLaunch && conf.SetupJava && conf.SetupGameManage)),
-                    (ModMain.frmSetupLeft.TextToolsCategory, !conf.SetupGameLink),
                     (ModMain.frmSetupLeft.TextLauncherCategory, !(conf.SetupUi && conf.SetupLauncherLanguage && conf.SetupLauncherMisc)),
                     (ModMain.frmSetupLeft.TextAboutCategory,
-                        !(conf.SetupAbout && conf.SetupUpdate && conf.SetupFeedback && conf.SetupLog))
+                        !(conf.SetupAbout && conf.SetupFeedback && conf.SetupLog))
                 };
 
                 foreach (var category in categories)
@@ -817,10 +1117,6 @@ public partial class PageSetupUI
                     setupCount += 1;
                 if (!conf.SetupJava)
                     setupCount += 1;
-                if (!conf.SetupUpdate)
-                    setupCount += 1;
-                if (!conf.SetupGameLink)
-                    setupCount += 1;
                 if (!conf.SetupAbout)
                     setupCount += 1;
                 if (!conf.SetupFeedback)
@@ -834,25 +1130,15 @@ public partial class PageSetupUI
             // 工具子页面 (FrmToolsLeft)
             if (ModMain.frmToolsLeft is not null)
             {
-                ModMain.frmToolsLeft.ItemGameLink.Visibility = !HiddenForceShow && conf.ToolsGameLink
-                    ? Visibility.Collapsed
-                    : Visibility.Visible;
                 ModMain.frmToolsLeft.ItemTest.Visibility =
                     !HiddenForceShow && conf.ToolsTest ? Visibility.Collapsed : Visibility.Visible;
-                
-                // 处理分类标题
-                var isGameLinkVisible = (!HiddenForceShow && !conf.ToolsGameLink) || HiddenForceShow;
-                ModMain.frmToolsLeft.TextGameLinkCategory.Visibility = isGameLinkVisible ? Visibility.Visible : Visibility.Collapsed;
-                if (isGameLinkVisible) ModMain.frmToolsLeft.TextGameLinkCategory.Opacity = 0.6;
 
                 var isToolsVisible = (!HiddenForceShow && !conf.ToolsTest) || HiddenForceShow;
                 ModMain.frmToolsLeft.TextToolsCategory.Visibility = isToolsVisible ? Visibility.Visible : Visibility.Collapsed;
                 if (isToolsVisible) ModMain.frmToolsLeft.TextToolsCategory.Opacity = 0.6;
-                
+
                 // 统计工具页可用项数量
                 var toolsCount = 0;
-                if (!conf.ToolsGameLink)
-                    toolsCount += 1;
                 if (!conf.ToolsTest)
                     toolsCount += 1;
                 ModMain.frmToolsLeft.PanItem.Visibility =
@@ -889,8 +1175,6 @@ public partial class PageSetupUI
         CheckHiddenSetupGameManage.Checked = isChecked;
         CheckHiddenLauncherMisc.Checked = isChecked;
         CheckHiddenSetupJava.Checked = isChecked;
-        CheckHiddenSetupUpdate.Checked = isChecked;
-        CheckHiddenSetupGameLink.Checked = isChecked;
         CheckHiddenSetupAbout.Checked = isChecked;
         CheckHiddenSetupFeedback.Checked = isChecked;
         CheckHiddenSetupLog.Checked = isChecked;
@@ -908,8 +1192,6 @@ public partial class PageSetupUI
         CheckHiddenSetupGameManage.Checked = isChecked;
         CheckHiddenLauncherMisc.Checked = isChecked;
         CheckHiddenSetupJava.Checked = isChecked;
-        CheckHiddenSetupUpdate.Checked = isChecked;
-        CheckHiddenSetupGameLink.Checked = isChecked;
         CheckHiddenSetupAbout.Checked = isChecked;
         CheckHiddenSetupFeedback.Checked = isChecked;
         CheckHiddenSetupLog.Checked = isChecked;
@@ -922,7 +1204,7 @@ public partial class PageSetupUI
         var conf = Config.Preference.Hide;
         // 判断是否全部勾选
         var allChecked = conf.SetupLaunch && conf.SetupUi && conf.SetupLauncherLanguage && conf.SetupJava &&
-                         conf.SetupUpdate && conf.SetupGameLink && conf.SetupAbout && conf.SetupFeedback &&
+                         conf.SetupAbout && conf.SetupFeedback &&
                          conf.SetupLog && conf.SetupLauncherMisc && conf.SetupGameManage;
         CheckHiddenPageSetup.Checked = allChecked;
     }
@@ -933,7 +1215,6 @@ public partial class PageSetupUI
         if (!user)
             return;
         var isChecked = (bool)CheckHiddenPageTools.Checked;
-        CheckHiddenToolsGameLink.Checked = isChecked;
         CheckHiddenToolsTest.Checked = isChecked;
     }
 
@@ -942,7 +1223,7 @@ public partial class PageSetupUI
         if (!user)
             return;
         var conf = Config.Preference.Hide;
-        var allChecked = conf.ToolsGameLink && conf.ToolsTest;
+        var allChecked = conf.ToolsTest;
         CheckHiddenPageTools.Checked = allChecked;
     }
 

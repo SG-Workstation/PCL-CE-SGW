@@ -24,6 +24,8 @@ internal static class Program
         }
 #endif
         Console.WriteLine("Welcome to PCL CE SGW!");
+        // 主题包：必须在主窗口构造前注册页面钩子，否则首屏页面会错过 Loaded 事件
+        ThemePackManager.EnsureHandlerRegistered();
         // Preloading tasks
         ApplicationService.Loading = static () =>
         {

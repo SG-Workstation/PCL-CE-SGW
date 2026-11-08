@@ -32,38 +32,37 @@
                                             Tag="UiLauncherTransparent" MaxValue="600" ValueByKey="10" Grid.Column="1"
                                             Change="SliderChange" />
                         </Grid>
-                        <Border Background="{DynamicResource ColorBrushToolTip}" Margin="0,5,0,12" CornerRadius="4"
-                                Name="PanLauncherHide" Visibility="Collapsed">
-                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20">
-                                <TextBlock Text="{DynamicResource Setup.Ui.Basic.BlueHint}" FontSize="13" Margin="0,0,0,0"
-                                           TextWrapping="Wrap" />
-                                <local:MyButton Height="35" x:Name="BtnLauncherDonate" MinWidth="140" Text="{DynamicResource Setup.Ui.Basic.GetSnapshot}"
-                                                Padding="13,0" HorizontalAlignment="Center" Margin="0,9,0,0"
-                                                ColorType="Highlight" Click="BtnLauncherDonate_Click" />
-                            </StackPanel>
-                        </Border>
                         <Grid Height="28" Margin="0,0,0,7">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" SharedSizeGroup="Name1" />
                                 <ColumnDefinition />
                                 <ColumnDefinition Width="92" SharedSizeGroup="SubName" />
                                 <ColumnDefinition />
-                                <ColumnDefinition SharedSizeGroup="SubName" />
-                                <ColumnDefinition />
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{DynamicResource Setup.Ui.Theme.Title}" />
-                            <local:MyComboBox Grid.Column="1" x:Name="ComboDarkMode" Tag="UiDarkMode"
-                                              SelectionChanged="ComboChange">
-                                <local:MyComboBoxItem Content="{DynamicResource Setup.Ui.Theme.Light}" />
-                                <local:MyComboBoxItem Content="{DynamicResource Setup.Ui.Theme.Dark}" />
-                                <local:MyComboBoxItem Content="{DynamicResource Setup.Ui.Theme.FollowSystem}" /> <!-- default -->
+                            <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource Setup.Ui.Theme.ColorTarget}" />
+                            <local:MyComboBox Grid.Column="1" x:Name="ComboColorTarget" SelectionChanged="ComboColorTarget_Change">
+                                <local:MyComboBoxItem Content="{DynamicResource Setup.Ui.Theme.ColorTarget.Theme}" />
+                                <local:MyComboBoxItem Content="{DynamicResource Setup.Ui.Theme.ColorTarget.TitleBar}" />
+                                <local:MyComboBoxItem Content="{DynamicResource Setup.Ui.Theme.ColorTarget.Base}" />
+                                <local:MyComboBoxItem Content="{DynamicResource Setup.Ui.Theme.ColorTarget.Content}" />
+                                <local:MyComboBoxItem Content="{DynamicResource Setup.Ui.Theme.ColorTarget.TextBlack}" />
+                                <local:MyComboBoxItem Content="{DynamicResource Setup.Ui.Theme.ColorTarget.TextWhite}" />
+                                <local:MyComboBoxItem Content="{DynamicResource Setup.Ui.Theme.ColorTarget.TextSelected}" />
+                                <local:MyComboBoxItem Content="{DynamicResource Setup.Ui.Theme.ColorTarget.TitleLogo}" />
+                                <local:MyComboBoxItem Content="{DynamicResource Setup.Ui.Theme.ColorTarget.TabLaunch}" />
+                                <local:MyComboBoxItem Content="{DynamicResource Setup.Ui.Theme.ColorTarget.TabDownload}" />
+                                <local:MyComboBoxItem Content="{DynamicResource Setup.Ui.Theme.ColorTarget.TabSettings}" />
+                                <local:MyComboBoxItem Content="{DynamicResource Setup.Ui.Theme.ColorTarget.TabTools}" />
+                                <local:MyComboBoxItem Content="{DynamicResource Setup.Ui.Theme.ColorTarget.Border}" />
+                                <local:MyComboBoxItem Content="{DynamicResource Setup.Ui.Theme.ColorTarget.BorderHover}" />
+                                <local:MyComboBoxItem Content="{DynamicResource Setup.Ui.Theme.ColorTarget.BorderFocus}" />
+                                <local:MyComboBoxItem Content="{DynamicResource Setup.Ui.Theme.ColorTarget.Slider}" />
+                                <local:MyComboBoxItem Content="{DynamicResource Setup.Ui.Theme.ColorTarget.WindowButton}" />
                             </local:MyComboBox>
-                            <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{DynamicResource Setup.Ui.Theme.LightColor}"/>
-                            <local:MyComboBox Grid.Column="3" x:Name="ComboLightColor" Tag="UiLightColor" ItemsSource="{Binding ThemeColors}" SelectionChanged="ThemeColor_Change"/>
-                            <TextBlock Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{DynamicResource Setup.Ui.Theme.DarkColor}"/>
-                            <local:MyComboBox Grid.Column="5" x:Name="ComboDarkColor" Tag="UiDarkColor" ItemsSource="{Binding ThemeColors}" SelectionChanged="ThemeColor_Change"/>
-
+                            <local:MyButton Grid.Column="3" Height="28" Padding="13,0" HorizontalAlignment="Left"
+                                            Text="{DynamicResource Setup.Ui.Theme.ColorReset}" Click="BtnColorReset_Click" />
                         </Grid>
+                        <local:MyColorPicker x:Name="PickerColor" Margin="0,0,0,10" HorizontalAlignment="Stretch" />
                         <local:MyCheckBox Text="{DynamicResource Setup.Ui.Basic.ShowLogo}" Margin="-1,0,0,7" Height="22"
                                           x:Name="CheckLauncherLogo" Tag="UiLauncherLogo" Change="CheckBoxChange" />
                         <local:MyCheckBox Text="{DynamicResource Setup.Ui.Basic.LockWindow}" Margin="-1,0,0,7" Height="22" x:Name="CheckLockWindowSize"
@@ -133,6 +132,29 @@
                     <local:FontSelector Grid.Row="2" Grid.Column="2" x:Name="ComboUiMotdFont"
                                         Tooltip="{DynamicResource Setup.Ui.Font.Motd.ToolTip}" SelectionChanged="ComboMotdFontChange" />
                 </Grid>
+            </local:MyCard>
+            <local:MyCard x:Name="CardThemePack" Margin="0,0,0,15" Title="{DynamicResource Setup.Ui.ThemePack.Title}">
+                <StackPanel Margin="25,40,25,20">
+                    <Grid Height="30" Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="Name" />
+                            <ColumnDefinition Width="25" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{DynamicResource Setup.Ui.ThemePack.Select}" />
+                        <local:MyComboBox Grid.Column="2" x:Name="ComboThemePack" Margin="0,0,10,0"
+                                          SelectionChanged="ComboThemePack_SelectionChanged" />
+                        <local:MyButton Grid.Column="3" Height="30" Margin="0,0,10,0" Padding="13,0"
+                                        Text="{DynamicResource Setup.Ui.ThemePack.OpenFolder}" Click="BtnThemePackOpen_Click" />
+                        <local:MyButton Grid.Column="4" Height="30" Padding="13,0"
+                                        Text="{DynamicResource Setup.Ui.ThemePack.Rescan}" Click="BtnThemePackRescan_Click" />
+                    </Grid>
+                    <TextBlock FontSize="12" LineHeight="18" Text="{DynamicResource Setup.Ui.ThemePack.Description}" TextWrapping="Wrap" />
+                    <local:MyButton Height="30" Margin="0,10,0,0" Padding="13,0" HorizontalAlignment="Left"
+                                    Text="{DynamicResource Setup.Ui.ThemePack.Export}" Click="BtnThemePackExport_Click" />
+                </StackPanel>
             </local:MyCard>
             <local:MyCard x:Name="CardBackground" Margin="0,0,0,15" Title="{DynamicResource Setup.Ui.Background.TitleDefault}">
                 <StackPanel Margin="25,40,25,20">
@@ -358,8 +380,6 @@
                             <local:MyComboBoxItem Content="{DynamicResource Setup.Ui.Homepage.Preset.MinecraftKnowledge}" />
                             <local:MyComboBoxItem Content="{DynamicResource Setup.Ui.Homepage.Preset.ModpackRecommendation}" />
                             <local:MyComboBoxItem Content="{DynamicResource Setup.Ui.Homepage.Preset.Bangumi}" />
-                            <local:MyComboBoxItem Content="{DynamicResource Setup.Ui.Homepage.Preset.PclAnnouncement}"/>
-                            <local:MyComboBoxItem Content="{DynamicResource Setup.Ui.Homepage.Preset.McOfficialFeed}"/>
                         </local:MyComboBox>
                     </Grid>
                 </StackPanel>
@@ -407,9 +427,6 @@
                         <local:MyCheckBox Height="22" VerticalAlignment="Center" Grid.Row="2" Grid.Column="4" Text="{DynamicResource Setup.Ui.FeatureHide.Item.GameManage}"
                                           x:Name="CheckHiddenSetupGameManage" Tag="UiHiddenSetupGameManage"
                                           Change="CheckBoxChange" />
-                        <local:MyCheckBox Height="22" VerticalAlignment="Center" Grid.Row="2" Grid.Column="5" Text="{DynamicResource Setup.Ui.FeatureHide.Item.GameLink}"
-                                          x:Name="CheckHiddenSetupGameLink" Tag="UiHiddenSetupGameLink"
-                                          Change="CheckBoxChange" />
                         <local:MyCheckBox Height="22" VerticalAlignment="Center" Grid.Row="2" Grid.Column="6"
                                           Text="{DynamicResource Setup.Ui.FeatureHide.Item.Ui}" x:Name="CheckHiddenSetupUI" Tag="UiHiddenSetupUi"
                                           Change="CheckBoxChange" />
@@ -418,9 +435,6 @@
                                           Change="CheckBoxChange" />
                         <local:MyCheckBox Height="22" VerticalAlignment="Center" Grid.Row="3" Grid.Column="3" Text="{DynamicResource Setup.Ui.FeatureHide.Item.Misc}"
                                           x:Name="CheckHiddenLauncherMisc" Tag="UiHiddenSetupLauncherMisc"
-                                          Change="CheckBoxChange" />
-                        <local:MyCheckBox Height="22" VerticalAlignment="Center" Grid.Row="3" Grid.Column="4"
-                                          Text="{DynamicResource Setup.Ui.FeatureHide.Item.Update}" x:Name="CheckHiddenSetupUpdate" Tag="UiHiddenSetupUpdate"
                                           Change="CheckBoxChange" />
                         <local:MyCheckBox Height="22" VerticalAlignment="Center" Grid.Row="3" Grid.Column="5" Text="{DynamicResource Setup.Ui.FeatureHide.Item.About}"
                                           x:Name="CheckHiddenSetupAbout" Tag="UiHiddenSetupAbout"
@@ -432,7 +446,6 @@
                                           Text="{DynamicResource Setup.Ui.FeatureHide.Item.Log}" x:Name="CheckHiddenSetupLog" Tag="UiHiddenSetupLog"
                                           Change="CheckBoxChange" />
                         <TextBlock Grid.Row="4" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{DynamicResource Setup.Ui.FeatureHide.SubTools}" />
-                        <local:MyCheckBox Height="22" VerticalAlignment="Center" Grid.Row="4" Grid.Column="2" Text="{DynamicResource Setup.Ui.FeatureHide.Item.Lobby}" x:Name="CheckHiddenToolsGameLink" Tag="UiHiddenToolsGameLink" Change="CheckBoxChange"/>
                         <local:MyCheckBox Height="22" VerticalAlignment="Center" Grid.Row="4" Grid.Column="3" Text="{DynamicResource Setup.Ui.FeatureHide.Item.Toolbox}" x:Name="CheckHiddenToolsTest" Tag="UiHiddenToolsTest" Change="CheckBoxChange"/>
                         <TextBlock Grid.Row="5" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{DynamicResource Setup.Ui.FeatureHide.SubInstance}" />
                         <local:MyCheckBox Height="22" VerticalAlignment="Center" Grid.Row="5" Grid.Column="2" Text="{DynamicResource Setup.Ui.FeatureHide.Item.Edit}"

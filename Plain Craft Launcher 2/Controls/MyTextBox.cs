@@ -1,9 +1,11 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using FluentValidation;
+using PCL.Core.App;
+using PCL.Core.UI.Theme;
 
 using PCL.Core.App.Localization;
 namespace PCL;
@@ -60,7 +62,21 @@ public class MyTextBox : TextBox
         GotFocus += (_, _) => RefreshColor();
         LostFocus += (_, _) => RefreshColor();
         IsEnabledChanged += (_, _) => RefreshTextColor();
+        Loaded += (_, _) =>
+        {
+            ThemeService.ColorModeChanged += OnThemeChanged;
+            ThemeService.ColorThemeChanged += OnThemeChanged;
+        };
+        Unloaded += (_, _) =>
+        {
+            ThemeService.ColorModeChanged -= OnThemeChanged;
+            ThemeService.ColorThemeChanged -= OnThemeChanged;
+        };
     }
+
+    private void OnThemeChanged(bool isDarkMode, ColorTheme theme) => Dispatcher.Invoke(RefreshColor);
+
+    private void OnThemeChanged(ColorTheme theme) => Dispatcher.Invoke(RefreshColor);
 
     // 自定义属性
 
@@ -317,19 +333,19 @@ public class MyTextBox : TextBox
                 {
                     if (IsFocused)
                     {
-                        foreColorName = "ColorBrush3";
+                        foreColorName = "ColorBrushBorderFocus";
                         backColorName = "ColorBrush7";
                         animationTime = 10;
                     }
                     else if (IsMouseOver)
                     {
-                        foreColorName = "ColorBrush4";
+                        foreColorName = "ColorBrushBorderHover";
                         backColorName = "ColorBrush7";
                         animationTime = 100;
                     }
                     else // 未选中
                     {
-                        foreColorName = "ColorBrushBg0";
+                        foreColorName = "ColorBrushBorder";
                         backColorName = "ColorBrushHalfWhite";
                         animationTime = 100;
                     }

@@ -2513,6 +2513,8 @@
     <sys:String x:Key="Setup.About.Licenses.Title">Licenses and copyrights</sys:String>
     <sys:String x:Key="Setup.About.Licenses.ViewLicense">License document</sys:String>
     <sys:String x:Key="Setup.About.Licenses.ViewWebsite">Source website</sys:String>
+    <sys:String x:Key="Setup.About.Maintainer.Info">Developer and maintainer of PCL CE SGW.</sys:String>
+    <sys:String x:Key="Setup.About.Maintainer.Name">SG Workstation</sys:String>
     <sys:String x:Key="Setup.About.OriginalAuthor.Info">The original author of Plain Craft Launcher!</sys:String>
     <sys:String x:Key="Setup.About.OriginalAuthor.Name">LTCat (龙腾猫跃)</sys:String>
     <sys:String x:Key="Setup.About.SourceCode">Source code</sys:String>
@@ -3017,6 +3019,9 @@
 
     <!-- Setup.Ui -->
 
+    <sys:String x:Key="Setup.Ui.ColorPicker.Alpha">Opacity</sys:String>
+    <sys:String x:Key="Setup.Ui.ColorPicker.Brightness">Brightness</sys:String>
+    <sys:String x:Key="Setup.Ui.ColorPicker.Preview">Preview</sys:String>
     <sys:String x:Key="Setup.Ui.Error.BackgroundVideoUnsupported">Failed to refresh the background. The video may not be encoded as H.264 (AVC). Re-encode it as H.264 (AVC) and try again.</sys:String>
     <sys:String x:Key="Setup.Ui.Error.ConfigReset">There is an exception in the personalization settings and it has been automatically reset.</sys:String>
     <sys:String x:Key="Setup.Ui.Error.InitFailed">Failed to initialize the personalization settings.</sys:String>
@@ -3215,17 +3220,55 @@
 
     <!-- Setup.Ui.Theme -->
 
+    <sys:String x:Key="Setup.Ui.Theme.Chroma">Chroma offset</sys:String>
     <sys:String x:Key="Setup.Ui.Theme.Color.CatBlue">LTCat Blue</sys:String>
     <sys:String x:Key="Setup.Ui.Theme.Color.CrashBlue">Crash Blue</sys:String>
     <sys:String x:Key="Setup.Ui.Theme.Color.Hmcl">HMCL</sys:String>
     <sys:String x:Key="Setup.Ui.Theme.Color.SkyBlue">Sky Blue</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorReset">Follow theme</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget">Editing</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.Base">Base</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.Border">Border</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.BorderHover">Border (hover)</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.BorderFocus">Border (focus)</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.Content">Content area</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.TextBlack">Black unselected text</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.TabDownload">Download button</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.TabLaunch">Launch button</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.TabSettings">Settings button</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.Slider">Slider</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.TabTools">Tools button</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.TextSelected">Blue selected text</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.TextWhite">White unselected text</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.TitleLogo">Top bar title</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.WindowButton">Window buttons</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.Theme">Theme color</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.ColorTarget.TitleBar">Title bar</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.CustomColor">Custom theme color</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.CustomColor.ToolTip">Enable to use any hue instead of the blue presets</sys:String>
     <sys:String x:Key="Setup.Ui.Theme.Dark">Dark</sys:String>
     <sys:String x:Key="Setup.Ui.Theme.DarkColor">Dark theme color</sys:String>
     <sys:String x:Key="Setup.Ui.Theme.DarkColor.ToolTip">Default theme color in dark mode</sys:String>
     <sys:String x:Key="Setup.Ui.Theme.FollowSystem">Follow system</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.Hue">Hue</sys:String>
     <sys:String x:Key="Setup.Ui.Theme.Light">Light</sys:String>
     <sys:String x:Key="Setup.Ui.Theme.LightColor">Light theme color</sys:String>
+    <sys:String x:Key="Setup.Ui.Theme.Lightness">Lightness offset</sys:String>
     <sys:String x:Key="Setup.Ui.Theme.Title">Theme</sys:String>
+    <sys:String x:Key="Setup.Ui.ThemePack.Applied">Theme applied!</sys:String>
+    <sys:String x:Key="Setup.Ui.ThemePack.Description">Drop a theme pack into the PCL/Themes folder and rescan to enable it. Colors, fonts, wallpaper and page layout can be customized; see README.md in that folder for the format.</sys:String>
+    <sys:String x:Key="Setup.Ui.ThemePack.Export">Export current look</sys:String>
+    <sys:String x:Key="Setup.Ui.ThemePack.Export.DefaultName">My theme</sys:String>
+    <sys:String x:Key="Setup.Ui.ThemePack.Export.Fail">Export failed: {0}</sys:String>
+    <sys:String x:Key="Setup.Ui.ThemePack.Export.Message">Enter a theme name. Current colors, font, wallpaper and layout will be packed into the PCL/Themes folder.</sys:String>
+    <sys:String x:Key="Setup.Ui.ThemePack.Export.Success">Exported theme: {0}</sys:String>
+    <sys:String x:Key="Setup.Ui.ThemePack.Export.Title">Export theme</sys:String>
+    <sys:String x:Key="Setup.Ui.ThemePack.None">None (built-in colors)</sys:String>
+    <sys:String x:Key="Setup.Ui.ThemePack.OpenFolder">Open theme folder</sys:String>
+    <sys:String x:Key="Setup.Ui.ThemePack.Rescan">Rescan</sys:String>
+    <sys:String x:Key="Setup.Ui.ThemePack.Rescanned">Theme list refreshed</sys:String>
+    <sys:String x:Key="Setup.Ui.ThemePack.Select">Theme pack</sys:String>
+    <sys:String x:Key="Setup.Ui.ThemePack.Title">Custom theme</sys:String>
 
     <!-- Setup.Update -->
 

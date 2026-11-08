@@ -346,3 +346,6 @@ MaskFiles/
 # macOS
 
 **/.DS_Store
+
+# 本地硬编码密钥（不入库）
+PCL.Core/App/LocalSecrets.cs

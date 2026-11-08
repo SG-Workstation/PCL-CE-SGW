@@ -41,6 +41,23 @@ public static class ThemeManager
     // 主页面背景
     private static void RefreshBackground()
     {
+        // 底板颜色被用户单独指定时，直接使用该颜色（覆盖彩色渐变）
+        if (!string.IsNullOrWhiteSpace(Config.Preference.Theme.BaseColor))
+        {
+            try
+            {
+                var baseColor = (Color)ColorConverter.ConvertFromString(Config.Preference.Theme.BaseColor)!;
+                var baseBrush = new SolidColorBrush(baseColor);
+                baseBrush.Freeze();
+                ModMain.frmMain.PanForm.Background = baseBrush;
+                return;
+            }
+            catch (Exception)
+            {
+                // 非法颜色回落到主题配色
+            }
+        }
+
         if (Config.Preference.Background.BackgroundColorful)
         {
             var brush = new LinearGradientBrush

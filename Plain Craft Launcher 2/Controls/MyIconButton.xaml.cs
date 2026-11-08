@@ -3,6 +3,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using PCL.Core.App;
+using PCL.Core.UI.Theme;
 
 namespace PCL;
 
@@ -48,8 +50,22 @@ public partial class MyIconButton
         MouseLeave += (_, _) => Button_MouseLeave();
         MouseEnter += (_, _) => RefreshAnim();
         MouseLeave += (_, _) => RefreshAnim();
-        Loaded += (_, _) => RefreshAnim();
+        Loaded += (_, _) =>
+        {
+            ThemeService.ColorModeChanged += OnThemeChanged;
+            ThemeService.ColorThemeChanged += OnThemeChanged;
+            RefreshAnim();
+        };
+        Unloaded += (_, _) =>
+        {
+            ThemeService.ColorModeChanged -= OnThemeChanged;
+            ThemeService.ColorThemeChanged -= OnThemeChanged;
+        };
     }
+
+    private void OnThemeChanged(bool isDarkMode, ColorTheme theme) => RefreshAnim();
+
+    private void OnThemeChanged(ColorTheme theme) => RefreshAnim();
 
     public string Logo
     {
@@ -99,6 +115,29 @@ public partial class MyIconButton
     } = 1d;
 
     public Themes Theme { get; set; } = Themes.Color;
+
+    /// <summary>
+    ///     自定义颜色资源键；设置后覆盖 White 主题的图标与悬停背景颜色。
+    /// </summary>
+    public string ColorResourceKey
+    {
+        get;
+        set
+        {
+            value ??= string.Empty;
+            if (value == field) return;
+            field = value;
+            RefreshAnim();
+        }
+    } = string.Empty;
+
+    private bool HasCustomColor => !string.IsNullOrWhiteSpace(ColorResourceKey) &&
+                                   ThemeManager.AppResources.Contains(ColorResourceKey);
+
+    private ModBase.MyColor GetCustomColor()
+    {
+        return new ModBase.MyColor(ThemeManager.AppResources[ColorResourceKey]);
+    }
 
     public SolidColorBrush Foreground
     {
@@ -185,10 +224,13 @@ public partial class MyIconButton
             }
             case Themes.White:
             {
+                var hoverBase = HasCustomColor
+                    ? GetCustomColor()
+                    : new ModBase.MyColor(255d, 255d, 255d);
                 animations.Add(ModAnimation.AaColor(
                     PanBack,
                     BackgroundProperty,
-                    new ModBase.MyColor(50d, 255d, 255d, 255d) - PanBack.Background,
+                    new ModBase.MyColor(50d, hoverBase) - PanBack.Background,
                     animationColorIn));
                 break;
             }
@@ -260,7 +302,9 @@ public partial class MyIconButton
             }
             case Themes.White:
             {
-                var whiteNormalColor = new ModBase.MyColor(234d, 242d, 254d);
+                var whiteNormalColor = HasCustomColor
+                    ? GetCustomColor()
+                    : new ModBase.MyColor(234d, 242d, 254d);
                 if (IsUsingSvgIcon)
                     AnimateActiveSvgIconBrush(whiteNormalColor, animationColorOut);
                 else
@@ -337,7 +381,10 @@ public partial class MyIconButton
                 SetActiveIconResource("ColorBrush4");
                 break;
             case Themes.White:
-                SetActiveIconBrush(new ModBase.MyColor(234d, 242d, 254d));
+                if (HasCustomColor)
+                    SetActiveIconResource(ColorResourceKey);
+                else
+                    SetActiveIconBrush(new ModBase.MyColor(234d, 242d, 254d));
                 break;
             case Themes.Red:
                 SetActiveIconBrush(new ModBase.MyColor(160d, 255d, 76d, 76d));

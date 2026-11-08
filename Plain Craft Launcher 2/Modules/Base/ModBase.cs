@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -2671,7 +2671,18 @@ public static class ModBase
         if (RunInUi())
             action();
         else
-            System.Windows.Application.Current.Dispatcher.InvokeAsync(action,
+            System.Windows.Application.Current.Dispatcher.InvokeAsync(() =>
+                {
+                    // 异步派发到 UI 线程时不能让异常逃逸，否则会变成“未观测的异步任务异常”
+                    try
+                    {
+                        action();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log(ex, "UI 线程异步操作失败", LogLevel.Debug);
+                    }
+                },
                 forceWaitUntilLoaded ? DispatcherPriority.Loaded : DispatcherPriority.Normal);
     }
 
@@ -2878,7 +2889,8 @@ public static class ModBase
             for (var attempt = 0; attempt <= 5; attempt++)
                 try
                 {
-                    RunInUi(() => Clipboard.SetText(text));
+                    // 必须等到 UI 线程真正执行完再判断结果；否则异常会在 UI 线程异步抛出，变成未观测的异步任务异常
+                    RunInUiWait(() => Clipboard.SetText(text));
                     success = true;
                     break;
                 }
@@ -3565,23 +3577,8 @@ public static class ModBase
 
     public static bool CanFeedback(bool showHint)
     {
-        var stat = UpdateManager.GetVersionStatus();
-        if (stat == UpdateEnums.VersionStatus.Latest) return true;
-
-        if (!showHint) return false;
-
-        if (ModMain.MyMsgBox(
-                stat == UpdateEnums.VersionStatus.NotLatest
-                    ? Lang.Text("Setup.Feedback.Unavailable.NotLatest.Message")
-                    : Lang.Text("Setup.Feedback.Unavailable.CheckFailed.Message"),
-                Lang.Text("Setup.Feedback.Unavailable.Title"),
-                stat == UpdateEnums.VersionStatus.NotLatest
-                    ? Lang.Text("Setup.Feedback.Unavailable.NotLatest.Action")
-                    : Lang.Text("Setup.Feedback.Unavailable.CheckFailed.Action"),
-                Lang.Text("Common.Action.Cancel")) == 1)
-            ModMain.frmMain.PageChange(FormMain.PageType.Setup, FormMain.PageSubType.SetupUpdate);
-
-        return false;
+        // 本构建不包含更新检查，无法判断是否为最新版，直接允许反馈
+        return true;
     }
 
     /// <summary>
